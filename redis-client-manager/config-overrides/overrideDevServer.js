@@ -1,0 +1,9 @@
+function overrideDevServer(config) {
+    config.writeToDisk = true;
+    config.quiet = false;
+    config.hot = false;
+    config.historyApiFallback = true;
+    return config;
+}
+
+module.exports = overrideDevServer;
