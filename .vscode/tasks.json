@@ -39,6 +39,10 @@
             "script": "dist",
             "path": "./",
             "problemMatcher": []
+        },
+        {
+            "label": "build:all",
+            "dependsOn": ["generate:icons", "build:react", "build:electron"]
         }
     ]
 }
