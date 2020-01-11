@@ -70,3 +70,23 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+# Installing hiredis properly on Macos
+
+## Installing updated version of gcc/g++ library (hiredis require 4.8 or newer)
+
+https://medium.com/@dvsuresh/install-latest-gcc-on-mac-os-x-b4ce9a66a184
+http://osupdocs.forestry.oregonstate.edu/index.php/Compiling_in_MacOS_X#Install_GCC_4.8_or_Newer (RECCOMENDED)
+http://www.cs.millersville.edu/~gzoppetti/InstallingGccMac.html
+
+1. Download gcc version
+2. Move to the downloaded gcc folder
+3. Download prerequisites from the command line (./contrib/download_prerequisites)
+4. Launch from the command line ./configure; make; make install
+
+# REMOTE REDIS DATA (for testing purpose)
+
+host: redis-12051.c90.us-east-1-3.ec2.cloud.redislabs.com
+port: 12051
+url: redis-12051.c90.us-east-1-3.ec2.cloud.redislabs.com:12051
+password: GEVYidqI7NVg7qBrVLzBSj5LwthsE0VR

@@ -7,6 +7,6 @@ export const Config = {
     key: "redis-desktop-manager",
     storage,
     debug: process.env.NODE_ENV === "development",
-    whietelist: [REDIS_CLIENTS_REDUCER_NAME],
+    whietelist: [],
     blacklist: []
 };
