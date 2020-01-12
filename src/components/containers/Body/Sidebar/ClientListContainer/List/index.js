@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-
 import Item from "./../Item";
+import React from "react";
 import Styled from "./styled";
 import getRedisClientsSelector from "./../../../../../../state/selectors/getRedisClientsSelector";
 import { useSelector } from "react-redux";

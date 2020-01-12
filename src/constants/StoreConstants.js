@@ -8,5 +8,5 @@ export const Config = {
     storage,
     debug: process.env.NODE_ENV === "development",
     whietelist: [],
-    blacklist: []
+    blacklist: [REDIS_CLIENTS_REDUCER_NAME]
 };

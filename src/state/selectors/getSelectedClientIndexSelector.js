@@ -1,5 +1,5 @@
 import { REDIS_CLIENTS_REDUCER_NAME } from "../../constants/StoreConstants";
 
-export default function(state) {
+export default function getSelectedClientIndexSelector(state) {
     return state[REDIS_CLIENTS_REDUCER_NAME].selectedClientIndex;
 }

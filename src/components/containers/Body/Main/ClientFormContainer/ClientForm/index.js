@@ -1,58 +1,54 @@
-import { Button, Label, TextInput } from "react-desktop/macOs";
+import { Button, Label } from "react-desktop/macOs";
+import React, { useCallback } from "react";
 
 import Container from "./Container";
 import Field from "./Field";
 import Footer from "./Footer";
+import Input from "./Input";
+import InputLabel from "./InputLabel";
 import Left from "./Left";
-import React from "react";
 import Right from "./Right";
 import Styled from "./styled";
+import addRedisClientAction from "./../../../../../../state/actions/addRedisClientAction";
+import { useDispatch } from "react-redux";
+
+const fields = [
+    { label: "Nome", inputKey: "name" },
+    { label: "Host", inputKey: "host" },
+    { label: "Port", inputKey: "port" },
+    { label: "Password", inputKey: "password", password: true }
+];
 
 const ClientForm = () => {
+    const dispatch = useDispatch();
+    const addToFavorite = useCallback(() => dispatch(addRedisClientAction()), [dispatch]);
     return (
-        <Styled>
+        <Styled
+            onSubmit={e => {
+                e.preventDefault();
+                console.log("Connetti!");
+            }}
+        >
             <Container>
-                <Field>
-                    <Left>
-                        <Label>Nome</Label>
-                    </Left>
-                    <Right>
-                        <TextInput defaultValue="" onChange={e => console.log(e)} />
-                    </Right>
-                </Field>
-                <Field>
-                    <Left>
-                        <Label>Host</Label>
-                    </Left>
-                    <Right>
-                        <TextInput defaultValue="" onChange={e => console.log(e)} />
-                    </Right>
-                </Field>
-                <Field>
-                    <Left>
-                        <Label>Port</Label>
-                    </Left>
-                    <Right>
-                        <TextInput defaultValue="" onChange={e => console.log(e)} />
-                    </Right>
-                </Field>
-                <Field>
-                    <Left>
-                        <Label>Password</Label>
-                    </Left>
-                    <Right>
-                        <TextInput defaultValue="" onChange={e => console.log(e)} />
-                    </Right>
-                </Field>
+                {fields.map(field => (
+                    <Field key={field.label}>
+                        <Left>
+                            <InputLabel inputKey={field.inputKey}>{field.label}</InputLabel>
+                        </Left>
+                        <Right>
+                            <Input inputKey={field.inputKey} password={field.password} />
+                        </Right>
+                    </Field>
+                ))}
             </Container>
             <Footer>
                 <Left inverted={true}>
-                    <Button color="white" onClick={() => console.log("Clicked!")}>
+                    <Button type="button" color="white" onClick={() => addToFavorite()}>
                         Aggiungi ai preferiti
                     </Button>
                 </Left>
                 <Right inverted={true}>
-                    <Button color="blue" onClick={() => console.log("Clicked!")}>
+                    <Button type="submit" color="blue">
                         Connetti
                     </Button>
                 </Right>

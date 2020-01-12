@@ -8,9 +8,10 @@ import setSelectedClientIndexAction from "./../../../../../../state/actions/setS
 const Item = ({ item, index }) => {
     const isClientSelected = useSelector(state => isClientSelectedSelector(state, index));
     const dispatch = useDispatch();
-    const setSelectedClientIndex = useCallback(index => dispatch(setSelectedClientIndexAction(index)));
+    const setSelectedClientIndex = useCallback(index => dispatch(setSelectedClientIndexAction(index)), [dispatch]);
+
     return (
-        <Styled onClick={() => setSelectedClientIndex(index)} selected={isClientSelected}>
+        <Styled onClick={() => setSelectedClientIndex(index)} onDoubleClick={() => console.log("connect")} selected={isClientSelected}>
             {item.name}
         </Styled>
     );
