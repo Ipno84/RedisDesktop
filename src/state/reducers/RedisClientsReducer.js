@@ -9,9 +9,11 @@ import {
     SET_SELECTED_CLIENT_INDEX
 } from "./../../constants/RedisClientsConstants";
 
+import { REDIS_CLIENTS_REDUCER_NAME } from "../../constants/StoreConstants";
 import { SUCCESS } from "./../../constants/BaseConstants";
+import { createTransform } from "redux-persist";
 
-const initialState = {
+export const initialState = {
     clients: [],
     connectedClients: [],
     selectedClientIndex: -1,
@@ -24,6 +26,22 @@ const initialState = {
     formKeyErrors: {}
 };
 
+export const RedisClientsReducerTransform = createTransform(
+    inboundState => {
+        return { ...inboundState };
+    },
+    outboundState => {
+        return {
+            ...outboundState,
+            connectedClients: initialState.connectedClients,
+            selectedClientIndex: initialState.selectedClientIndex,
+            form: initialState.form,
+            formKeyErrors: initialState.formKeyErrors
+        };
+    },
+    { whitelist: [REDIS_CLIENTS_REDUCER_NAME] }
+);
+
 export default (state = initialState, action) => {
     switch (action.type) {
         case ADD_REDIS_CLIENT + SUCCESS:
@@ -32,9 +50,12 @@ export default (state = initialState, action) => {
                 clients: [...state.clients, action.client]
             };
         case REMOVE_REDIS_ClIENT + SUCCESS:
+            if (state.selectedClientIndex === -1) {
+                return { ...state };
+            }
             return {
                 ...state,
-                clients: [...state.clients.slice(0, action.index), ...state.clients.slice(action.index + 1)]
+                clients: [...state.clients.slice(0, state.selectedClientIndex), ...state.clients.slice(state.selectedClientIndex + 1)]
             };
         case CONNECT_REDIS_CLIENT + SUCCESS:
             return {

@@ -1,4 +1,4 @@
-import { Config } from "./../../constants/StoreConstants";
+import Config from "./../../constants/StoreConfig";
 import { combineReducers } from "redux";
 import { persistReducer } from "redux-persist";
 import rootReducers from "../reducers";
