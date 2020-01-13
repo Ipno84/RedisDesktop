@@ -1,5 +1,6 @@
 import {
     ADD_REDIS_CLIENT,
+    CLOSE_MODAL,
     CONNECT_REDIS_CLIENT,
     DISCONNECT_REDIS_CLIENT,
     REMOVE_REDIS_ClIENT,
@@ -10,6 +11,7 @@ import {
 } from "./../../constants/RedisClientsConstants";
 
 import { REDIS_CLIENTS_REDUCER_NAME } from "../../constants/StoreConstants";
+import { REMOVE_REDIS_CLIENT_MODAL_KEY } from "../../constants/ModalsConstants";
 import { SUCCESS } from "./../../constants/BaseConstants";
 import { createTransform } from "redux-persist";
 
@@ -23,7 +25,8 @@ export const initialState = {
         port: "",
         password: ""
     },
-    formKeyErrors: {}
+    formKeyErrors: {},
+    modals: []
 };
 
 export const RedisClientsReducerTransform = createTransform(
@@ -36,7 +39,8 @@ export const RedisClientsReducerTransform = createTransform(
             connectedClients: initialState.connectedClients,
             selectedClientIndex: initialState.selectedClientIndex,
             form: initialState.form,
-            formKeyErrors: initialState.formKeyErrors
+            formKeyErrors: initialState.formKeyErrors,
+            modals: initialState.modals
         };
     },
     { whitelist: [REDIS_CLIENTS_REDUCER_NAME] }
@@ -47,7 +51,13 @@ export default (state = initialState, action) => {
         case ADD_REDIS_CLIENT + SUCCESS:
             return {
                 ...state,
-                clients: [...state.clients, action.client]
+                clients: [...state.clients, action.client],
+                form: initialState.form
+            };
+        case REMOVE_REDIS_ClIENT:
+            return {
+                ...state,
+                modals: [...state.modals, REMOVE_REDIS_CLIENT_MODAL_KEY]
             };
         case REMOVE_REDIS_ClIENT + SUCCESS:
             if (state.selectedClientIndex === -1) {
@@ -91,6 +101,11 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 formKeyErrors: action.formKeyErrors
+            };
+        case CLOSE_MODAL:
+            return {
+                ...state,
+                modals: [...state.modals.slice(0, action.index), ...state.modals.slice(action.index + 1)]
             };
         default:
             return state;
