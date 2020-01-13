@@ -4,5 +4,7 @@ import getFormDataErrorsSelector from "./getFormDataErrorsSelector";
 export default createSelector(
     getFormDataErrorsSelector,
     (_, item) => item,
-    (formKeyErrors, item) => Object.keys(formKeyErrors).includes(item)
+    (formKeyErrors, item) => {
+        return formKeyErrors[item] ? formKeyErrors[item] : null;
+    }
 );

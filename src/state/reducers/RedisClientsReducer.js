@@ -12,7 +12,7 @@ import {
 import { SUCCESS } from "./../../constants/BaseConstants";
 
 const initialState = {
-    clients: [{ name: "Test" }],
+    clients: [],
     connectedClients: [],
     selectedClientIndex: -1,
     form: {
@@ -21,7 +21,7 @@ const initialState = {
         port: "",
         password: ""
     },
-    formErrors: []
+    formKeyErrors: {}
 };
 
 export default (state = initialState, action) => {
@@ -58,18 +58,18 @@ export default (state = initialState, action) => {
                     ...state.form,
                     [action.key]: action.value
                 },
-                formErrors: initialState.formErrors
+                formKeyErrors: initialState.formKeyErrors
             };
         case RESET_FORM_DATA:
             return {
                 ...state,
                 form: initialState.form,
-                formErrors: initialState.formErrors
+                formKeyErrors: initialState.formKeyErrors
             };
         case SET_FORM_DATA_ERROR:
             return {
                 ...state,
-                formErrors: action.formErrors
+                formKeyErrors: action.formKeyErrors
             };
         default:
             return state;

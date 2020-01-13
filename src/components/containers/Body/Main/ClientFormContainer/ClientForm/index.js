@@ -1,6 +1,6 @@
-import { Button, Label } from "react-desktop/macOs";
 import React, { useCallback } from "react";
 
+import { Button } from "react-desktop/macOs";
 import Container from "./Container";
 import Field from "./Field";
 import Footer from "./Footer";
@@ -13,8 +13,8 @@ import addRedisClientAction from "./../../../../../../state/actions/addRedisClie
 import { useDispatch } from "react-redux";
 
 const fields = [
-    { label: "Nome", inputKey: "name" },
-    { label: "Host", inputKey: "host" },
+    { label: "Nome", inputKey: "name", required: true },
+    { label: "Host", inputKey: "host", required: true },
     { label: "Port", inputKey: "port" },
     { label: "Password", inputKey: "password", password: true }
 ];
@@ -33,7 +33,9 @@ const ClientForm = () => {
                 {fields.map(field => (
                     <Field key={field.label}>
                         <Left>
-                            <InputLabel inputKey={field.inputKey}>{field.label}</InputLabel>
+                            <InputLabel inputKey={field.inputKey} required={field.required}>
+                                {field.label}
+                            </InputLabel>
                         </Left>
                         <Right>
                             <Input inputKey={field.inputKey} password={field.password} />
