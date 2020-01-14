@@ -7,6 +7,9 @@ import {
     RESET_FORM_DATA,
     SET_ACTIVE_CONNECTED_CLIENT_INDEX,
     SET_ACTIVE_REDIS_CLIENT_KEYS,
+    SET_ACTIVE_REDIS_SEARCH_KEY,
+    SET_CURRENT_KEY,
+    SET_CURRENT_VALUE,
     SET_FORM_DATA_ERROR,
     SET_FORM_DATA_ITEM,
     SET_SELECTED_CLIENT_INDEX
@@ -134,6 +137,42 @@ export default (state = initialState, action) => {
                     {
                         ...state.connectedClients[state.activeConnectedClientIndex],
                         keys: action.keys
+                    },
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
+                ]
+            };
+        case SET_ACTIVE_REDIS_SEARCH_KEY:
+            return {
+                ...state,
+                connectedClients: [
+                    ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
+                    {
+                        ...state.connectedClients[state.activeConnectedClientIndex],
+                        searchKey: action.searchKey
+                    },
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
+                ]
+            };
+        case SET_CURRENT_KEY:
+            return {
+                ...state,
+                connectedClients: [
+                    ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
+                    {
+                        ...state.connectedClients[state.activeConnectedClientIndex],
+                        selectedKey: action.selectedKey
+                    },
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
+                ]
+            };
+        case SET_CURRENT_VALUE:
+            return {
+                ...state,
+                connectedClients: [
+                    ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
+                    {
+                        ...state.connectedClients[state.activeConnectedClientIndex],
+                        value: action.value
                     },
                     ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
                 ]
