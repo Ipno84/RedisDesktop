@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export default styled.div`
-    height: 100%;
+    height: calc(100vh - 15.6rem);
     display: flex;
     background-color: #f5f5f4;
 `;
