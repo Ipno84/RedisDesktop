@@ -10,6 +10,7 @@ import Left from "./Left";
 import Right from "./Right";
 import Styled from "./styled";
 import addRedisClientAction from "./../../../../../../state/actions/addRedisClientAction";
+import connectRedisClientAction from "./../../../../../../state/actions/connectRedisClientAction";
 import { useDispatch } from "react-redux";
 
 const fields = [
@@ -22,11 +23,12 @@ const fields = [
 const ClientForm = () => {
     const dispatch = useDispatch();
     const addToFavorite = useCallback(() => dispatch(addRedisClientAction()), [dispatch]);
+    const connect = useCallback(() => dispatch(connectRedisClientAction(true)), [dispatch]);
     return (
         <Styled
             onSubmit={e => {
                 e.preventDefault();
-                console.log("Connetti!");
+                connect();
             }}
         >
             <Container>

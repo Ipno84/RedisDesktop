@@ -14,11 +14,11 @@ const ConfirmRedisClientDeletationModal = ({ index }) => {
                 dispatch(removeRedisClientActionSuccess());
                 dispatch(closeModalAction(index));
             }),
-        [dispatch, batch, index]
+        [dispatch, index]
     );
     return (
         <Dialog
-            title="Conferma cancellazione Redis client"
+            title="Conferma cancellazione"
             message="Sei sicuro di voler cancellare il Redis client denominato Cippa Lippa?"
             buttons={[
                 <Button onClick={() => cancel()}>Annulla</Button>,
