@@ -4,21 +4,20 @@ const overrideDevServer = require("./overrideDevServer");
 const { override, useBabelRc, addBabelPlugins } = require("customize-cra");
 
 const configurationCra = {
-    devServer: configFunction => (proxy, allowedHost) =>
-        overrideDevServer(
-            configFunction(proxy, allowedHost),
-            useBabelRc(),
-            ...addBabelPlugins([
-                "prismjs",
-                {
-                    languages: ["javascript", "php", "json"],
-                    plugins: [],
-                    theme: "twilight",
-                    css: true
-                }
-            ])
-        ),
-    webpack: override(overrideWebpackDevCra())
+    devServer: configFunction => (proxy, allowedHost) => overrideDevServer(configFunction(proxy, allowedHost)),
+    webpack: override(
+        overrideWebpackDevCra(),
+        useBabelRc(),
+        ...addBabelPlugins([
+            "prismjs",
+            {
+                languages: ["javascript", "php", "json"],
+                plugins: ["normalize-whitespace"],
+                theme: "twilight",
+                css: true
+            }
+        ])
+    )
 };
 
 const configuration = {

@@ -12,6 +12,7 @@ import {
     SET_CURRENT_VALUE,
     SET_FORM_DATA_ERROR,
     SET_FORM_DATA_ITEM,
+    SET_PARSER_TYPE,
     SET_SELECTED_CLIENT_INDEX
 } from "./../../constants/RedisClientsConstants";
 
@@ -173,6 +174,18 @@ export default (state = initialState, action) => {
                     {
                         ...state.connectedClients[state.activeConnectedClientIndex],
                         value: action.value
+                    },
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
+                ]
+            };
+        case SET_PARSER_TYPE:
+            return {
+                ...state,
+                connectedClients: [
+                    ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
+                    {
+                        ...state.connectedClients[state.activeConnectedClientIndex],
+                        parser: action.parser
                     },
                     ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
                 ]

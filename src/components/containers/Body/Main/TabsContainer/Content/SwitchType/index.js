@@ -1,17 +1,26 @@
-import { SegmentedControl, SegmentedControlItem, Text } from "react-desktop/macOs";
+import React, { useCallback } from "react";
+import { SegmentedControl, SegmentedControlItem } from "react-desktop/macOs";
+import { useDispatch, useSelector } from "react-redux";
 
-import React from "react";
 import Styled from "./styled";
-import { useSelector } from "react-redux";
+import getActiveConnectedClientParserSelector from "../../../../../../../state/selectors/getActiveConnectedClientParserSelector";
+import setParserTypeAction from "../../../../../../../state/actions/setParserTypeAction";
 
-const options = ["Full Text", "Dump", "JSON"];
+const options = [
+    { label: "Full Text", type: "" },
+    { label: "Dump", type: "php" },
+    { label: "JSON", type: "javascript" }
+];
 
 const SwitchType = () => {
+    const dispatch = useDispatch();
+    const setParserType = useCallback(parser => dispatch(setParserTypeAction(parser)), [dispatch]);
+    const parser = useSelector(state => getActiveConnectedClientParserSelector(state));
     return (
         <Styled>
             <SegmentedControl>
                 {options.map((option, i) => (
-                    <SegmentedControlItem key={option} title={option} onSelect={() => console.log(option, i)} />
+                    <SegmentedControlItem key={option} selected={option.type === parser} title={option.label} onSelect={() => setParserType(option.type)} />
                 ))}
             </SegmentedControl>
         </Styled>

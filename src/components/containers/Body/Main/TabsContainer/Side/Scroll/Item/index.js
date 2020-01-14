@@ -8,7 +8,7 @@ import setActiveRedisSelectedKeyAction from "./../../../../../../../../state/act
 const Item = ({ children }) => {
     const dispatch = useDispatch();
     const isCurrentKeyActive = useSelector(state => isCurrentKeyActiveSelector(state, children));
-    const setActiveRedisSelectedKey = useCallback(() => dispatch(setActiveRedisSelectedKeyAction(children)), [dispatch]);
+    const setActiveRedisSelectedKey = useCallback(() => dispatch(setActiveRedisSelectedKeyAction(children)), [dispatch, children]);
     return (
         <Styled isActive={isCurrentKeyActive} onClick={() => setActiveRedisSelectedKey()}>
             {children}
