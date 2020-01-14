@@ -1,11 +1,15 @@
 import React from "react";
+import Renderer from "./Renderer";
 import Styled from "./styled";
-import getActiveConnectedClientSelector from "../../../../../../state/selectors/getActiveConnectedClientSelector";
-import { useSelector } from "react-redux";
+import SwitchType from "./SwitchType";
 
 const Content = () => {
-    const client = useSelector(state => getActiveConnectedClientSelector(state));
-    return <Styled>{client.name}</Styled>;
+    return (
+        <Styled>
+            <SwitchType />
+            <Renderer />
+        </Styled>
+    );
 };
 
 export default Content;

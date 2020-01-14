@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Counter from "./Counter";
@@ -13,6 +13,9 @@ const Top = () => {
     const getActiveRedisClientKeys = useCallback(value => dispatch(getActiveRedisClientKeysAction(value)), [dispatch]);
     const setActiveRedisSearchKey = useCallback(value => dispatch(setActiveRedisSearchKeyAction(value)), [dispatch]);
     const value = useSelector(state => getActiveConnectedClientSearchKeySelector(state));
+    useEffect(() => {
+        getActiveRedisClientKeys("*");
+    }, []);
     return (
         <Styled>
             <TextInput

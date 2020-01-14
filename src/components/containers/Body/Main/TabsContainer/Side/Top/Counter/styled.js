@@ -10,6 +10,10 @@ export default styled.div`
     font-weight: 300;
     z-index: 3;
     font-size: 0.7rem;
-    background-color: #015cff;
+    /* background-color: #015cff; */
+    background: -webkit-linear-gradient(top, rgba(90, 178, 246) 0%, rgb(0, 130, 250) 100%);
+    border-color: rgb(48, 160, 245) rgb(0, 128, 247) rgb(0, 96, 250);
+    border-style: solid;
+    border-width: 1px;
     color: #fff;
 `;

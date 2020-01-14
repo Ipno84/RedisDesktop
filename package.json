@@ -54,6 +54,8 @@
         ]
     },
     "devDependencies": {
+        "babel-plugin-prismjs": "^2.0.0",
+        "customize-cra": "^0.9.1",
         "electron-builder": "^21.2.0",
         "electron-icon-maker": "0.0.4",
         "electron-rebuild": "^1.8.8",
@@ -84,5 +86,20 @@
             "icon": "build/app-icon/icons/png/32x32.png",
             "category": "Development"
         }
+    },
+    "babel": {
+        "plugins": [
+            [
+                "prismjs",
+                {
+                    "languages": [
+                        "javascript",
+                        "php"
+                    ],
+                    "plugins": [],
+                    "css": true
+                }
+            ]
+        ]
     }
 }
