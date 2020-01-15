@@ -13,7 +13,9 @@ import {
     SET_FORM_DATA_ERROR,
     SET_FORM_DATA_ITEM,
     SET_PARSER_TYPE,
-    SET_SELECTED_CLIENT_INDEX
+    SET_REDIS_SHELL,
+    SET_SELECTED_CLIENT_INDEX,
+    TOGGLE_FULLSCREEN_TERMINAL
 } from "./../../constants/RedisClientsConstants";
 
 import { REDIS_CLIENTS_REDUCER_NAME } from "../../constants/StoreConstants";
@@ -33,7 +35,8 @@ export const initialState = {
         password: ""
     },
     formKeyErrors: {},
-    modals: []
+    modals: [],
+    isTerminalFullscreen: false
 };
 
 export const RedisClientsReducerTransform = createTransform(
@@ -48,7 +51,8 @@ export const RedisClientsReducerTransform = createTransform(
             selectedClientIndex: initialState.selectedClientIndex,
             form: initialState.form,
             formKeyErrors: initialState.formKeyErrors,
-            modals: initialState.modals
+            modals: initialState.modals,
+            isTerminalFullscreen: initialState.isTerminalFullscreen
         };
     },
     { whitelist: [REDIS_CLIENTS_REDUCER_NAME] }
@@ -190,6 +194,29 @@ export default (state = initialState, action) => {
                     ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
                 ]
             };
+        case SET_REDIS_SHELL + SUCCESS:
+            const isReplace = Boolean(action.shell.response);
+            const currentClient = state.connectedClients[state.activeConnectedClientIndex];
+            const currentClientShells = currentClient.shells ? currentClient.shells : [];
+            return {
+                ...state,
+                connectedClients: [
+                    ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
+                    {
+                        ...state.connectedClients[state.activeConnectedClientIndex],
+                        shells: isReplace
+                            ? [
+                                  ...currentClientShells.slice(0, currentClientShells.length - 1),
+                                  action.shell,
+                                  ...currentClientShells.slice(currentClientShells.length)
+                              ]
+                            : [...currentClientShells, action.shell]
+                    },
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
+                ]
+            };
+        case TOGGLE_FULLSCREEN_TERMINAL:
+            return { ...state, isTerminalFullscreen: !state.isTerminalFullscreen };
         default:
             return state;
     }

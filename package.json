@@ -3,6 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "main": "electron/index.js",
+    "bin": {
+        "redis-cli": "./node_modules/redis-cli/bin/rdcli"
+    },
     "dependencies": {
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.3.2",

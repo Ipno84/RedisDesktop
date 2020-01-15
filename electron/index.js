@@ -1,10 +1,13 @@
 const { app, BrowserWindow } = require("electron");
 const isDev = require("electron-is-dev");
 const path = require("path");
+const fs = require("fs");
 
 let mainWindow;
 
-global.rootPath = `file://${path.resolve(__dirname)}`;
+global.rootPath = path.resolve(__dirname);
+global.rootFilePath = `file://${rootPath}`;
+global.redisCliPath = path.resolve(__dirname, "./redis-cli/index.js");
 
 function createWindow() {
     mainWindow = new BrowserWindow({

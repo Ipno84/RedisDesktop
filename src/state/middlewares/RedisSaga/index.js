@@ -4,6 +4,7 @@ import disconnectRedisWatcher from "./watchers/disconnectRedisWatcher";
 import { fork } from "redux-saga/effects";
 import getActiveRedisClientKeysWatcher from "./watchers/getActiveRedisClientKeysWatcher";
 import getActiveRedisKeyWatcher from "./watchers/getActiveRedisKeyWatcher";
+import setRedisShellWatcher from "./watchers/setRedisShellWatcher";
 
 export default function* RedisSaga() {
     yield fork(connectRedisWatcher);
@@ -11,4 +12,5 @@ export default function* RedisSaga() {
     yield fork(disconnectRedisWatcher);
     yield fork(getActiveRedisClientKeysWatcher);
     yield fork(getActiveRedisKeyWatcher);
+    yield fork(setRedisShellWatcher);
 }
