@@ -2,7 +2,7 @@ import Content from "./Content";
 import React from "react";
 import Side from "./Side";
 import Styled from "./styled";
-import XTerm from "./XTerm";
+import Terminal from "./Terminal";
 
 const TabsContainer = () => {
     return (
@@ -11,7 +11,7 @@ const TabsContainer = () => {
                 <Side />
                 <Content />
             </Styled>
-            <XTerm />
+            <Terminal />
         </>
     );
 };

@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export default styled.div`
-    height: calc(100vh - 18.1rem);
-    overflow: auto;
+    background: black;
+    flex: 1;
+    padding: 0 1rem;
 `;
