@@ -1,13 +1,20 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, Menu, MenuItem } = require("electron");
 const isDev = require("electron-is-dev");
 const path = require("path");
-const fs = require("fs");
 
 let mainWindow;
 
 global.rootPath = path.resolve(__dirname);
 global.rootFilePath = `file://${rootPath}`;
 global.redisCliPath = path.resolve(__dirname, "./redis-cli/index.js");
+
+global.createContextMenu = items => {
+    let menu = new Menu();
+    items.forEach((item, i) => {
+        menu.insert(i, new MenuItem(item));
+    });
+    return menu;
+};
 
 function createWindow() {
     mainWindow = new BrowserWindow({

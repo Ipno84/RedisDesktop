@@ -3,8 +3,10 @@ import {
     CLOSE_MODAL,
     CONNECT_REDIS_CLIENT,
     DISCONNECT_REDIS_CLIENT,
+    EDIT_REDIS_CLIENT,
     REMOVE_REDIS_ClIENT,
     RESET_FORM_DATA,
+    SAVE_REDIS_CLIENT,
     SET_ACTIVE_CONNECTED_CLIENT_INDEX,
     SET_ACTIVE_REDIS_CLIENT_KEYS,
     SET_ACTIVE_REDIS_SEARCH_KEY,
@@ -36,7 +38,8 @@ export const initialState = {
     },
     formKeyErrors: {},
     modals: [],
-    isTerminalFullscreen: false
+    isTerminalFullscreen: false,
+    editingIndex: -1
 };
 
 export const RedisClientsReducerTransform = createTransform(
@@ -52,7 +55,8 @@ export const RedisClientsReducerTransform = createTransform(
             form: initialState.form,
             formKeyErrors: initialState.formKeyErrors,
             modals: initialState.modals,
-            isTerminalFullscreen: initialState.isTerminalFullscreen
+            isTerminalFullscreen: initialState.isTerminalFullscreen,
+            editingIndex: -1
         };
     },
     { whitelist: [REDIS_CLIENTS_REDUCER_NAME] }
@@ -65,36 +69,41 @@ export default (state = initialState, action) => {
                 ...state,
                 clients: [...state.clients, action.client],
                 form: initialState.form,
-                formKeyErrors: initialState.formKeyErrors
+                formKeyErrors: initialState.formKeyErrors,
+                editingIndex: initialState.editingIndex
             };
         case REMOVE_REDIS_ClIENT:
             return {
                 ...state,
                 modals: [...state.modals, REMOVE_REDIS_CLIENT_MODAL_KEY],
-                formKeyErrors: initialState.formKeyErrors
+                formKeyErrors: initialState.formKeyErrors,
+                editingIndex: initialState.editingIndex
             };
         case REMOVE_REDIS_ClIENT + SUCCESS:
             if (state.selectedClientIndex === -1) {
-                return { ...state };
+                return { ...state, editingIndex: initialState.editingIndex };
             }
             return {
                 ...state,
                 clients: [...state.clients.slice(0, state.selectedClientIndex), ...state.clients.slice(state.selectedClientIndex + 1)],
-                formKeyErrors: initialState.formKeyErrors
+                formKeyErrors: initialState.formKeyErrors,
+                editingIndex: initialState.editingIndex
             };
         case CONNECT_REDIS_CLIENT + SUCCESS:
             return {
                 ...state,
                 connectedClients: [...state.connectedClients, action.connectedClient],
                 formKeyErrors: initialState.formKeyErrors,
-                activeConnectedClientIndex: state.connectedClients.length
+                activeConnectedClientIndex: state.connectedClients.length,
+                editingIndex: initialState.editingIndex
             };
         case DISCONNECT_REDIS_CLIENT + SUCCESS:
             return {
                 ...state,
                 connectedClients: [...state.connectedClients.slice(0, action.index), ...state.connectedClients.slice(action.index + 1)],
                 formKeyErrors: initialState.formKeyErrors,
-                activeConnectedClientIndex: state.connectedClients.length - 2
+                activeConnectedClientIndex: state.connectedClients.length - 2,
+                editingIndex: initialState.editingIndex
             };
         case SET_SELECTED_CLIENT_INDEX:
             return {
@@ -115,7 +124,8 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 form: initialState.form,
-                formKeyErrors: initialState.formKeyErrors
+                formKeyErrors: initialState.formKeyErrors,
+                editingIndex: initialState.editingIndex
             };
         case SET_FORM_DATA_ERROR:
             return {
@@ -217,6 +227,37 @@ export default (state = initialState, action) => {
             };
         case TOGGLE_FULLSCREEN_TERMINAL:
             return { ...state, isTerminalFullscreen: !state.isTerminalFullscreen };
+        case EDIT_REDIS_CLIENT:
+            const { name, host, port, password } = action.index !== -1 ? state.clients[action.index] : {};
+            return {
+                ...state,
+                editingIndex: action.index,
+                form: {
+                    name: name ? name : "",
+                    host: host ? host : "",
+                    port: port ? port : "",
+                    password: password ? password : ""
+                }
+            };
+        case SAVE_REDIS_CLIENT:
+            if (state.editingIndex === -1) {
+                return { ...state };
+            }
+            const clientData = state.clients[state.editingIndex];
+            return {
+                ...state,
+                editingIndex: initialState.editingIndex,
+                form: initialState.form,
+                formKeyErrors: initialState.formKeyErrors,
+                clients: [
+                    ...state.clients.slice(0, state.editingIndex),
+                    {
+                        ...clientData,
+                        ...state.form
+                    },
+                    ...state.clients.slice(state.editingIndex + 1)
+                ]
+            };
         default:
             return state;
     }

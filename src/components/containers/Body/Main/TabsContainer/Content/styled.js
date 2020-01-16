@@ -7,4 +7,5 @@ export default styled.div`
     box-sizing: border-box;
     flex-direction: column;
     height: calc(100vh - 15.6rem);
+    max-width: 67.35vw;
 `;

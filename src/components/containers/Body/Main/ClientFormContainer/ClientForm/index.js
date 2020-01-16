@@ -1,4 +1,5 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "react-desktop/macOs";
 import Container from "./Container";
@@ -11,7 +12,9 @@ import Right from "./Right";
 import Styled from "./styled";
 import addRedisClientAction from "./../../../../../../state/actions/addRedisClientAction";
 import connectRedisClientAction from "./../../../../../../state/actions/connectRedisClientAction";
-import { useDispatch } from "react-redux";
+import editRedisClientAction from "../../../../../../state/actions/editRedisClientAction";
+import isEditingClientSelector from "../../../../../../state/selectors/isEditingClientSelector";
+import saveRedisClientAction from "../../../../../../state/actions/saveRedisClientAction";
 
 const fields = [
     { label: "Nome", inputKey: "name", required: true },
@@ -21,14 +24,22 @@ const fields = [
 ];
 
 const ClientForm = () => {
+    const isEditing = useSelector(state => isEditingClientSelector(state));
+    const [showPassword, toggleShowPassword] = useState(false);
     const dispatch = useDispatch();
     const addToFavorite = useCallback(() => dispatch(addRedisClientAction()), [dispatch]);
     const connect = useCallback(() => dispatch(connectRedisClientAction(true)), [dispatch]);
+    const editRedisClient = useCallback(() => dispatch(editRedisClientAction(-1)), [dispatch]);
+    const saveRedisClient = useCallback(() => dispatch(saveRedisClientAction()), [dispatch]);
     return (
         <Styled
             onSubmit={e => {
                 e.preventDefault();
-                connect();
+                if (isEditing) {
+                    saveRedisClient();
+                } else {
+                    connect();
+                }
             }}
         >
             <Container>
@@ -40,20 +51,49 @@ const ClientForm = () => {
                             </InputLabel>
                         </Left>
                         <Right>
-                            <Input inputKey={field.inputKey} password={field.password} />
+                            <Input inputKey={field.inputKey} password={field.password && !showPassword} />
+                            {field.password && (
+                                <button
+                                    type="button"
+                                    style={{
+                                        position: "absolute",
+                                        right: "0.4rem",
+                                        top: "0.2rem",
+                                        zIndex: 3,
+                                        margin: 0,
+                                        padding: 0,
+                                        background: "none",
+                                        border: "none",
+                                        outline: "none"
+                                    }}
+                                    onClick={() => toggleShowPassword(!showPassword)}
+                                >
+                                    👁
+                                </button>
+                            )}
                         </Right>
                     </Field>
                 ))}
             </Container>
             <Footer>
                 <Left inverted={true}>
-                    <Button type="button" color="white" onClick={() => addToFavorite()}>
-                        Aggiungi ai preferiti
+                    <Button
+                        type="button"
+                        color="white"
+                        onClick={() => {
+                            if (isEditing) {
+                                editRedisClient();
+                            } else {
+                                addToFavorite();
+                            }
+                        }}
+                    >
+                        {isEditing ? "Annulla" : "Aggiungi ai preferiti"}
                     </Button>
                 </Left>
                 <Right inverted={true}>
                     <Button type="submit" color="blue">
-                        Connetti
+                        {isEditing ? "Salva" : "Connetti"}
                     </Button>
                 </Right>
             </Footer>
