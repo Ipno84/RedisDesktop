@@ -8,6 +8,7 @@ export default styled.div`
     position: relative;
     border-right: 1px solid #c2c0c2;
     text-shadow: 1px 1px 0 #fff;
+    user-select: none;
     &:before {
         content: "";
         position: absolute;
@@ -29,6 +30,7 @@ export default styled.div`
         background-color: transparent;
         font-size: 0.9rem;
         display: none;
+        user-select: none;
     }
     &:hover {
         button {

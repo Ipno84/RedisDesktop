@@ -10,5 +10,6 @@ export default styled.div`
     padding: 1rem 1rem 0 1rem;
     pre {
         margin: 0 0 1rem 0;
+        white-space: pre-wrap;
     }
 `;

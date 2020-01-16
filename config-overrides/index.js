@@ -12,8 +12,8 @@ const configurationCra = {
             "prismjs",
             {
                 languages: ["javascript", "php", "json"],
-                plugins: ["normalize-whitespace"],
-                theme: "twilight",
+                plugins: ["normalize-whitespace", "autolinker", "highlight-keywords"],
+                theme: "okaidia",
                 css: true
             }
         ])

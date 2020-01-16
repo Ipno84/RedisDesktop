@@ -10,11 +10,14 @@ const MaximizeButton = () => {
     const dispatch = useDispatch();
     const isTerminalFullscreen = useSelector(state => isTerminalFullscreenSelector(state));
     const toggleFullscreen = useCallback(() => dispatch(toggleFullscreenAction()), [dispatch]);
-    const onEscKey = e => {
-        if (e.key.toLowerCase() === "escape" && isTerminalFullscreen) {
-            toggleFullscreen();
-        }
-    };
+    const onEscKey = useCallback(
+        e => {
+            if (e.key.toLowerCase() === "escape" && isTerminalFullscreen) {
+                toggleFullscreen();
+            }
+        },
+        [toggleFullscreen, isTerminalFullscreen]
+    );
     useEffect(() => {
         document.addEventListener("keyup", onEscKey);
         return () => {

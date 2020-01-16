@@ -39,20 +39,26 @@ const Renderer = () => {
             default:
                 html = value;
         }
+        Prism.hooks.add("porcodio", env => {
+            debugger;
+            if (env.type !== "ID") {
+                return;
+            }
+            env.classes.push("keyword-" + env.content);
+        });
     }
     useEffect(() => {
         if (codeWrapper && codeWrapper.current) {
             codeWrapper.current.scrollTo({
                 top: 0,
-                left: 0,
-                behavior: "smooth"
+                left: 0
             });
         }
     }, [parser, value, codeWrapper]);
     return (
         <Styled ref={codeWrapper}>
             <Box>
-                <pre>
+                <pre onSelect={e => console.log(e)}>
                     {parser ? (
                         <code className={`language-${parser}`} style={{ whiteSpace: "pre-wrap" }} dangerouslySetInnerHTML={{ __html: html }}></code>
                     ) : (

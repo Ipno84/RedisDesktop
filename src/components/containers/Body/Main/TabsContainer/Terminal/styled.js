@@ -12,6 +12,7 @@ export default styled.div`
     border-top: 1px solid #c2c0c2;
     padding: 1rem;
     position: relative;
+    word-break: break-all;
     ${props =>
         props.fullscreen &&
         css`

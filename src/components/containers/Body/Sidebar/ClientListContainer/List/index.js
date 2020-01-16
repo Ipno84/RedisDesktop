@@ -15,6 +15,7 @@ const ClientList = () => {
             </Box>
         );
     }
+    console.log(redisClients);
     return (
         <Styled>
             {redisClients.map((redisClient, i) => (

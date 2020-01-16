@@ -1,29 +1,44 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import Styled from "./styled";
 import { exec } from "child_process";
 import getActiveConnectedClientIndexSelector from "../../../../../../../state/selectors/getActiveConnectedClientIndexSelector";
-import { remote } from "electron";
+import getConnectedRedisClientConnectionCommandSelector from "../../../../../../../state/selectors/getConnectedRedisClientConnectionCommandSelector";
 import setRedisShellAction from "./../../../../../../../state/actions/setRedisShellAction";
 
-const redisCliPath = remote.getGlobal("redisCliPath");
-
 const TerminalInput = () => {
+    const responseRef = useRef("");
     const dispatch = useDispatch();
     const setRedisShell = useCallback(({ command, response }) => dispatch(setRedisShellAction({ command, response })), [dispatch]);
     const [command, setCommand] = useState("");
     const currentClientIndex = useSelector(state => getActiveConnectedClientIndexSelector(state));
+    const connectionCommand = useSelector(state => getConnectedRedisClientConnectionCommandSelector(state));
+    let timeout;
+    useEffect(() => {
+        return () => {
+            if (timeout) clearTimeout(timeout);
+        };
+    }, [timeout]);
     const onChange = e => setCommand(e.target.value);
     const onSubmit = e => {
         e.preventDefault();
         try {
             setRedisShell({ command });
-            let currentCommand = command;
-            currentCommand = currentCommand.replace("redis-cli", `node ${redisCliPath}`);
-            const res = exec(currentCommand);
+            const res = exec([connectionCommand, command].join(" "), {
+                encoding: "utf8",
+                timeout: 0,
+                maxBuffer: 1024 * 1024 * 1024,
+                killSignal: "SIGTERM",
+                cwd: null,
+                env: null
+            });
             res.stdout.on("data", response => {
-                setRedisShell({ response });
+                responseRef.current = responseRef.current + response;
+                timeout = setTimeout(() => {
+                    setRedisShell({ response: responseRef.current });
+                    responseRef.current = "";
+                }, 100);
             });
             res.stderr.on("data", response => {
                 setRedisShell({ response });
