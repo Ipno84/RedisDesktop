@@ -1,5 +1,6 @@
 import React from "react";
 import Renderer from "./Renderer";
+import Search from "./Search";
 import Styled from "./styled";
 import SwitchType from "./SwitchType";
 
@@ -8,6 +9,7 @@ const Content = () => {
         <Styled>
             <SwitchType />
             <Renderer />
+            <Search />
         </Styled>
     );
 };

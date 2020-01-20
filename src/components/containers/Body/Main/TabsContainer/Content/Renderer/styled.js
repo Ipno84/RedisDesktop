@@ -8,6 +8,7 @@ export default styled.div`
     overflow: auto;
     word-break: break-all;
     user-select: auto !important;
+    scroll-behavior: smooth;
     * {
         user-select: auto !important;
         cursor: text;

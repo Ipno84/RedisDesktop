@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Button } from "react-desktop/macOs";
 import Container from "./Container";
+import { Eye } from "styled-icons/icomoon/Eye";
+import { EyeBlocked } from "styled-icons/icomoon/EyeBlocked";
 import Field from "./Field";
 import Footer from "./Footer";
 import Input from "./Input";
@@ -15,6 +17,18 @@ import connectRedisClientAction from "./../../../../../../state/actions/connectR
 import editRedisClientAction from "../../../../../../state/actions/editRedisClientAction";
 import isEditingClientSelector from "../../../../../../state/selectors/isEditingClientSelector";
 import saveRedisClientAction from "../../../../../../state/actions/saveRedisClientAction";
+import styled from "styled-components";
+
+const style = `
+    color: #999;
+    padding: 0 0.4rem 0.2rem 0.4rem;`;
+
+const IconEye = styled(Eye)`
+    ${style}
+`;
+const IconEyeBlocked = styled(EyeBlocked)`
+    ${style}
+`;
 
 const fields = [
     { label: "Nome", inputKey: "name", required: true },
@@ -68,7 +82,7 @@ const ClientForm = () => {
                                     }}
                                     onClick={() => toggleShowPassword(!showPassword)}
                                 >
-                                    👁
+                                    {showPassword ? <IconEye size={16} /> : <IconEyeBlocked size={16} />}
                                 </button>
                             )}
                         </Right>
