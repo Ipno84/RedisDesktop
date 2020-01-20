@@ -19,18 +19,26 @@ const Item = ({ item, index }) => {
     const setSelectedClientIndex = useCallback(index => dispatch(setSelectedClientIndexAction(index)), [dispatch]);
     const connect = useCallback(() => dispatch(connectRedisClientAction(false)), [dispatch]);
     const editRedisClient = useCallback(index => dispatch(editRedisClientAction(index)), [dispatch]);
-    useEffect(() => {
-        itemRef.current.addEventListener("contextmenu", function(e) {
+    const onContextMenu = useCallback(
+        e => {
             const menuItems = [
                 {
                     label: "Modifica",
-                    click: (menuItem, browserWindow, event) => editRedisClient(index)
+                    click: () => editRedisClient(index)
                 }
             ];
             const menu = createContextMenu(menuItems);
             menu.popup();
-        });
-    }, [item, itemRef]);
+        },
+        [editRedisClient, index]
+    );
+    useEffect(() => {
+        const currentItem = itemRef.current;
+        currentItem.addEventListener("contextmenu", onContextMenu, false);
+        return () => {
+            currentItem.removeEventListener("contextmenu", onContextMenu, false);
+        };
+    }, [item, onContextMenu]);
     return (
         <Styled
             active={isActiveConnectedClientByName}

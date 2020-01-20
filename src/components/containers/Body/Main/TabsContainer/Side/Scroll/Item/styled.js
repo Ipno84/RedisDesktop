@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 
 export default styled.div`
-    padding: 0.2rem 0.6rem;
+    padding: 0.219rem 0.6rem;
     font-size: 0.9rem;
     border-style: solid;
     border-width: 1px;
@@ -9,6 +9,9 @@ export default styled.div`
     border-right: none;
     border-left: none;
     user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     ${props =>
         props.isActive &&
         css`

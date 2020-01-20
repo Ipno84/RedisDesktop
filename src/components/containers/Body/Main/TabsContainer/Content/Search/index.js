@@ -1,61 +1,72 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import ButtonContainer from "./ButtonContainer";
+import Input from "./Input";
 import Styled from "./styled";
-import { TextInput } from "react-desktop/macOs";
+import getSearchResultsSelector from "./../../../../../../../state/selectors/getSearchResultsSelector";
+import getSearchSelectedItemIndexSelector from "./../../../../../../../state/selectors/getSearchSelectedItemIndexSelector";
+import isSearchActiveSelector from "./../../../../../../../state/selectors/isSearchActiveSelector";
+import setSearchVisibilityAction from "./../../../../../../../state/actions/setSearchVisibilityAction";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const Search = () => {
+    const dispatch = useDispatch();
+
+    const isSearchActive = useSelector(state => isSearchActiveSelector(state));
+    const setSearchVisibility = useCallback(visibility => dispatch(setSearchVisibilityAction(visibility)), [dispatch]);
+
+    const searchResults = useSelector(state => getSearchResultsSelector(state));
+
+    const searchSelectedItemIndex = useSelector(state => getSearchSelectedItemIndexSelector(state));
+
     const searchWrapper = useRef(null);
-    const [searchText, setSearchText] = useState("");
-    const [foundCollectionItems, setFoundCollectionItems] = useState([]);
-    const [currentSelectedItemIndex, setCurrentSelectedItemIndex] = useState(-1);
 
-    const setSelection = element => {
-        const selection = window.getSelection();
-        const range = document.createRange();
-        range.selectNodeContents(element);
-        range.setEnd(element, 1);
-        selection.removeAllRanges();
-        selection.addRange(range);
-    };
-
-    const onChange = e => setSearchText(e.target.value);
-    const onNext = () => {
-        const nextIndex = currentSelectedItemIndex + 1;
-        setCurrentSelectedItemIndex(nextIndex === foundCollectionItems.length ? 0 : nextIndex);
-    };
-    const onPrev = () => {
-        const prevIndex = currentSelectedItemIndex - 1;
-        setCurrentSelectedItemIndex(prevIndex === -1 ? foundCollectionItems.length - 1 : prevIndex);
-    };
-    useEffect(() => {
-        if (searchText) {
-            const root = document.querySelector("[class*='language-']");
-            if (root) {
-                const res = [...root.children].filter(item => item.textContent.indexOf(searchText) > -1);
-                setFoundCollectionItems(res);
-                setCurrentSelectedItemIndex(0);
+    const command = process.platform === "darwin" ? "cmd+f" : "ctrl+f";
+    const onEscKey = useCallback(
+        e => {
+            if (isSearchActive && e.key === "Escape") {
+                const input = searchWrapper.current.querySelector("input");
+                if (input) {
+                    input.blur();
+                    setSearchVisibility(false);
+                }
             }
-        } else if (foundCollectionItems.length !== 0) {
-            setFoundCollectionItems([]);
-            setCurrentSelectedItemIndex(-1);
-        }
-    }, [searchText, foundCollectionItems.length]);
+        },
+        [setSearchVisibility, isSearchActive]
+    );
+
+    useHotkeys(command, () => setSearchVisibility(prevState => !prevState));
+
     useEffect(() => {
-        if (currentSelectedItemIndex !== -1) {
-            const element = foundCollectionItems[currentSelectedItemIndex];
+        document.addEventListener("keyup", onEscKey, false);
+        return () => {
+            document.removeEventListener("keyup", onEscKey, false);
+        };
+    }, [onEscKey]);
+
+    useEffect(() => {
+        if (searchSelectedItemIndex !== -1) {
+            const element = searchResults[searchSelectedItemIndex];
             if (element) {
                 const scroller = searchWrapper.current.previousElementSibling;
                 scroller.scrollTop = element.offsetTop - scroller.offsetTop;
                 scroller.scrollLeft = element.offsetLeft - scroller.offsetLeft;
-                setSelection(element);
             }
         }
-    }, [currentSelectedItemIndex, foundCollectionItems]);
+    }, [searchSelectedItemIndex, searchResults]);
+
+    useEffect(() => {
+        if (isSearchActive) {
+            const input = searchWrapper.current.querySelector("input");
+            if (input) input.focus();
+        }
+    }, [isSearchActive]);
+
     return (
-        <Styled ref={searchWrapper}>
-            <TextInput width={300} rounded={true} placeholder="Cerca..." type="search" value={searchText} onChange={onChange} />
-            {searchText && <ButtonContainer onNext={onNext} onPrev={onPrev} index={currentSelectedItemIndex} count={foundCollectionItems.length} />}
+        <Styled ref={searchWrapper} visible={isSearchActive}>
+            <Input />
+            <ButtonContainer />
         </Styled>
     );
 };

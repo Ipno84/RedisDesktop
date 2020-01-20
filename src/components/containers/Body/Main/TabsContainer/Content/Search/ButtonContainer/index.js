@@ -1,34 +1,34 @@
-import { CaretDown } from "styled-icons/boxicons-regular/CaretDown";
-import { CaretUp } from "styled-icons/boxicons-regular/CaretUp";
-import React from "react";
+import { IconCaretDown, IconCaretUp } from "./Icon";
+import React, { useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import Button from "./Button";
+import Indicator from "./Indicator";
 import Styled from "./styled";
 import { Text } from "react-desktop/macOs";
-import styled from "styled-components";
+import getSearchResultsCountSelector from "../../../../../../../../state/selectors/getSearchResultsCountSelector";
+import getSearchSelectedItemIndexSelector from "../../../../../../../../state/selectors/getSearchSelectedItemIndexSelector";
+import isSearchKeywordFilledSelector from "../../../../../../../../state/selectors/isSearchKeywordFilledSelector";
+import setSearchSelectedItemIndexAction from "../../../../../../../../state/actions/setSearchSelectedItemIndexAction";
 
-const style = `color: #333;`;
-const IconCaretDown = styled(CaretDown)`
-    ${style}
-`;
-const IconCaretUp = styled(CaretUp)`
-    ${style}
-`;
-const Indicator = styled.div`
-    width: 2rem;
-`;
+const ButtonContainer = () => {
+    const dispatch = useDispatch();
+    const count = useSelector(state => getSearchResultsCountSelector(state));
+    const searchSelectedItemIndex = useSelector(state => getSearchSelectedItemIndexSelector(state));
+    const isSearchKeywordFilled = useSelector(state => isSearchKeywordFilledSelector(state));
+    const searchResultsCount = useSelector(state => getSearchResultsCountSelector(state));
+    const setSearchSelectedItemIndex = useCallback(index => dispatch(setSearchSelectedItemIndexAction(index)), [dispatch]);
 
-const Button = styled.button`
-    margin: 0;
-    padding: 0;
-    border: none;
-    height: 1.4rem;
-    width: 1.3rem;
-    outline: 0;
-    &:last-child {
-        margin-right: 0.75rem;
-    }
-`;
+    const onNext = () => {
+        const nextIndex = searchSelectedItemIndex + 1;
+        setSearchSelectedItemIndex(nextIndex === searchResultsCount ? 0 : nextIndex);
+    };
+    const onPrev = () => {
+        const prevIndex = searchSelectedItemIndex - 1;
+        setSearchSelectedItemIndex(prevIndex === -1 ? searchResultsCount - 1 : prevIndex);
+    };
 
-const ButtonContainer = ({ index, count, onNext, onPrev }) => {
+    if (!isSearchKeywordFilled) return null;
     return (
         <Styled>
             <Button type="button" onClick={onNext}>
@@ -39,7 +39,7 @@ const ButtonContainer = ({ index, count, onNext, onPrev }) => {
             </Button>
             <Indicator>
                 <Text>
-                    {index + 1}/{count}
+                    {searchSelectedItemIndex + 1}/{count}
                 </Text>
             </Indicator>
         </Styled>

@@ -22,4 +22,7 @@ export default styled.div`
         padding-bottom: 1.2rem;
         user-select: auto;
     }
+    .searched {
+        background-color: #015cff !important;
+    }
 `;

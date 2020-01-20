@@ -5,14 +5,16 @@ import Styled from "./styled";
 import isCurrentKeyActiveSelector from "./../../../../../../../../state/selectors/isCurrentKeyActiveSelector";
 import setActiveRedisSelectedKeyAction from "./../../../../../../../../state/actions/setActiveRedisSelectedKeyAction";
 
-const Item = ({ children }) => {
+const Item = ({ children, style }) => {
     const dispatch = useDispatch();
     const isCurrentKeyActive = useSelector(state => isCurrentKeyActiveSelector(state, children));
     const setActiveRedisSelectedKey = useCallback(() => dispatch(setActiveRedisSelectedKeyAction(children)), [dispatch, children]);
     return (
-        <Styled isActive={isCurrentKeyActive} onClick={() => setActiveRedisSelectedKey()}>
-            {children}
-        </Styled>
+        <div style={style}>
+            <Styled isActive={isCurrentKeyActive} onClick={() => setActiveRedisSelectedKey()}>
+                {children}
+            </Styled>
+        </div>
     );
 };
 

@@ -16,6 +16,10 @@ import {
     SET_FORM_DATA_ITEM,
     SET_PARSER_TYPE,
     SET_REDIS_SHELL,
+    SET_SEARCH_KEYWORD,
+    SET_SEARCH_RESULTS,
+    SET_SEARCH_SELECTED_ITEM_INDEX,
+    SET_SEARCH_VISIBILITY,
     SET_SELECTED_CLIENT_INDEX,
     TOGGLE_FULLSCREEN_TERMINAL
 } from "./../../constants/RedisClientsConstants";
@@ -39,7 +43,13 @@ export const initialState = {
     formKeyErrors: {},
     modals: [],
     isTerminalFullscreen: false,
-    editingIndex: -1
+    editingIndex: -1,
+    search: {
+        keyword: "",
+        isActive: false,
+        results: [],
+        selectedItemIndex: -1
+    }
 };
 
 export const RedisClientsReducerTransform = createTransform(
@@ -56,7 +66,8 @@ export const RedisClientsReducerTransform = createTransform(
             formKeyErrors: initialState.formKeyErrors,
             modals: initialState.modals,
             isTerminalFullscreen: initialState.isTerminalFullscreen,
-            editingIndex: -1
+            editingIndex: -1,
+            search: initialState.search
         };
     },
     { whitelist: [REDIS_CLIENTS_REDUCER_NAME] }
@@ -257,6 +268,38 @@ export default (state = initialState, action) => {
                     },
                     ...state.clients.slice(state.editingIndex + 1)
                 ]
+            };
+        case SET_SEARCH_KEYWORD:
+            return {
+                ...state,
+                search: {
+                    ...state.search,
+                    keyword: action.keyword
+                }
+            };
+        case SET_SEARCH_VISIBILITY:
+            return {
+                ...state,
+                search: {
+                    ...state.search,
+                    isActive: action.isActive
+                }
+            };
+        case SET_SEARCH_RESULTS:
+            return {
+                ...state,
+                search: {
+                    ...state.search,
+                    results: action.results
+                }
+            };
+        case SET_SEARCH_SELECTED_ITEM_INDEX:
+            return {
+                ...state,
+                search: {
+                    ...state.search,
+                    selectedItemIndex: action.selectedItemIndex
+                }
             };
         default:
             return state;
