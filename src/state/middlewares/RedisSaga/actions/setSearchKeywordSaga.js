@@ -2,7 +2,6 @@ import { all, put, select } from "redux-saga/effects";
 
 import getSearchKeywordSelector from "./../../../selectors/getSearchKeywordSelector";
 import getSearchResultsCountSelector from "./../../../selectors/getSearchResultsCountSelector";
-// import getSearchResultsSelector from "./../../../selectors/getSearchResultsSelector";
 import isSearchKeywordFilledSelector from "./../../../selectors/isSearchKeywordFilledSelector";
 import setSearchResultsAction from "./../../../actions/setSearchResultsAction";
 import setSearchSelectedItemIndexAction from "./../../../actions/setSearchSelectedItemIndexAction";
@@ -12,7 +11,6 @@ export default function* setSearchKeywordSaga() {
         const searchKeyword = yield select(getSearchKeywordSelector);
         const isSearchKeywordFilled = yield select(isSearchKeywordFilledSelector);
         const searchResultsCount = yield select(getSearchResultsCountSelector);
-        // const searchResults = yield select(getSearchResultsSelector);
         if (isSearchKeywordFilled) {
             const root = document.querySelector("[class*='language-']");
             if (root) {

@@ -1,21 +1,25 @@
 import {
     ADD_REDIS_CLIENT,
+    ADD_SENTINEL,
     CLOSE_MODAL,
     CONNECT_REDIS_CLIENT,
     DISCONNECT_REDIS_CLIENT,
     EDIT_REDIS_CLIENT,
     REMOVE_REDIS_ClIENT,
+    REMOVE_SENTINEL,
     RESET_FORM_DATA,
     SAVE_REDIS_CLIENT,
     SET_ACTIVE_CONNECTED_CLIENT_INDEX,
     SET_ACTIVE_REDIS_CLIENT_KEYS,
     SET_ACTIVE_REDIS_SEARCH_KEY,
+    SET_CURRENT_EDITED_VALUE,
     SET_CURRENT_KEY,
     SET_CURRENT_VALUE,
     SET_FORM_DATA_ERROR,
     SET_FORM_DATA_ITEM,
     SET_PARSER_TYPE,
     SET_REDIS_SHELL,
+    SET_REMOTE_VALUE,
     SET_SEARCH_KEYWORD,
     SET_SEARCH_RESULTS,
     SET_SEARCH_SELECTED_ITEM_INDEX,
@@ -23,9 +27,9 @@ import {
     SET_SELECTED_CLIENT_INDEX,
     TOGGLE_FULLSCREEN_TERMINAL
 } from "./../../constants/RedisClientsConstants";
+import { REMOVE_REDIS_CLIENT_MODAL_KEY, SET_REMOTE_VALUE_MODAL_KEY } from "../../constants/ModalsConstants";
 
 import { REDIS_CLIENTS_REDUCER_NAME } from "../../constants/StoreConstants";
-import { REMOVE_REDIS_CLIENT_MODAL_KEY } from "../../constants/ModalsConstants";
 import { SUCCESS } from "./../../constants/BaseConstants";
 import { createTransform } from "redux-persist";
 
@@ -38,7 +42,14 @@ export const initialState = {
         name: "",
         host: "",
         port: "",
-        password: ""
+        master: "",
+        password: "",
+        sentinels: [
+            {
+                host: "",
+                port: ""
+            }
+        ]
     },
     formKeyErrors: {},
     modals: [],
@@ -203,13 +214,39 @@ export default (state = initialState, action) => {
                     ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
                 ]
             };
-        case SET_PARSER_TYPE:
+        case SET_CURRENT_EDITED_VALUE:
+            if (action.editedValue === undefined) {
+                const { editedValue: toRemove, ...redisClient } = state.connectedClients[state.activeConnectedClientIndex];
+                return {
+                    ...state,
+                    connectedClients: [
+                        ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
+                        {
+                            ...redisClient
+                        },
+                        ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
+                    ]
+                };
+            }
             return {
                 ...state,
                 connectedClients: [
                     ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
                     {
                         ...state.connectedClients[state.activeConnectedClientIndex],
+                        editedValue: action.editedValue
+                    },
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
+                ]
+            };
+        case SET_PARSER_TYPE:
+            const { editedValue: toRemove, ...redisClient } = state.connectedClients[state.activeConnectedClientIndex];
+            return {
+                ...state,
+                connectedClients: [
+                    ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
+                    {
+                        ...redisClient,
                         parser: action.parser
                     },
                     ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
@@ -300,6 +337,28 @@ export default (state = initialState, action) => {
                 search: {
                     ...state.search,
                     selectedItemIndex: action.selectedItemIndex
+                }
+            };
+        case SET_REMOTE_VALUE:
+            return {
+                ...state,
+                modals: [...state.modals, SET_REMOTE_VALUE_MODAL_KEY]
+            };
+        case ADD_SENTINEL:
+            return {
+                ...state,
+                formKeyErrors: initialState.formKeyErrors,
+                form: {
+                    ...state.form,
+                    sentinels: [...state.form.sentinels, { ...initialState.form.sentinels[0] }]
+                }
+            };
+        case REMOVE_SENTINEL:
+            return {
+                ...state,
+                form: {
+                    ...state.form,
+                    sentinels: [...state.form.sentinels.slice(0, action.index), ...state.form.sentinels.slice(action.index + 1)]
                 }
             };
         default:

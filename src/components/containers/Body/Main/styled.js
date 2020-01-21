@@ -5,4 +5,6 @@ export default styled.div`
     background-color: #ececec;
     display: flex;
     flex-direction: column;
+    height: 100vh;
+    overflow: auto;
 `;

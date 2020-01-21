@@ -1,12 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Box } from "react-desktop/macOs";
+import EditContainer from "./EditContainer";
 import Prism from "prismjs";
 import Styled from "./styled";
 import getActiveConnectedClientKeyValueSelector from "../../../../../../../state/selectors/getActiveConnectedClientKeyValueSelector";
 import getActiveConnectedClientParserSelector from "../../../../../../../state/selectors/getActiveConnectedClientParserSelector";
-import unserialize from "locutus/php/var/unserialize";
-import { useSelector } from "react-redux";
+import isActiveConnectedClientValueEditingSelector from "../../../../../../../state/selectors/isActiveConnectedClientValueEditingSelector";
+import setCurrentEditedValueAction from "../../../../../../../state/actions/setCurrentEditedValueAction";
+import unserialize from "../../../../../../../helpers/unserialize";
 import var_dump from "locutus/php/var/var_dump";
 
 Prism.plugins.NormalizeWhitespace.setDefaults({
@@ -22,9 +25,12 @@ Prism.plugins.NormalizeWhitespace.setDefaults({
 });
 
 const Renderer = () => {
+    const dispatch = useDispatch();
     const codeWrapper = useRef(null);
     const value = useSelector(state => getActiveConnectedClientKeyValueSelector(state));
     const parser = useSelector(state => getActiveConnectedClientParserSelector(state));
+    const setCurrentEditedValue = useCallback(editedValue => dispatch(setCurrentEditedValueAction(editedValue)), [dispatch]);
+    const isEditing = useSelector(state => isActiveConnectedClientValueEditingSelector(state));
     let html, content;
     if (value) {
         switch (parser) {
@@ -39,13 +45,6 @@ const Renderer = () => {
             default:
                 html = value;
         }
-        Prism.hooks.add("porcodio", env => {
-            debugger;
-            if (env.type !== "ID") {
-                return;
-            }
-            env.classes.push("keyword-" + env.content);
-        });
     }
     useEffect(() => {
         if (codeWrapper && codeWrapper.current) {
@@ -56,17 +55,27 @@ const Renderer = () => {
         }
     }, [parser, value, codeWrapper]);
     return (
-        <Styled ref={codeWrapper}>
-            <Box>
-                <pre onSelect={e => console.log(e)}>
-                    {parser ? (
-                        <code className={`language-${parser}`} style={{ whiteSpace: "pre-wrap" }} dangerouslySetInnerHTML={{ __html: html }}></code>
-                    ) : (
-                        <code style={{ whiteSpace: "pre-wrap", color: "#fff" }} dangerouslySetInnerHTML={{ __html: html }}></code>
+        <>
+            <Styled ref={codeWrapper}>
+                <Box>
+                    {value && (
+                        <pre>
+                            {parser ? (
+                                <code className={`language-${parser}`} style={{ whiteSpace: "pre-wrap" }} dangerouslySetInnerHTML={{ __html: html }} />
+                            ) : (
+                                <code
+                                    contentEditable={isEditing}
+                                    style={{ whiteSpace: "pre-wrap", color: "#fff" }}
+                                    dangerouslySetInnerHTML={{ __html: html }}
+                                    onInput={e => setCurrentEditedValue(e.target.innerText)}
+                                />
+                            )}
+                        </pre>
                     )}
-                </pre>
-            </Box>
-        </Styled>
+                </Box>
+            </Styled>
+            <EditContainer />
+        </>
     );
 };
 

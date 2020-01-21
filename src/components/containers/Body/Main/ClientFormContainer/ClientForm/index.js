@@ -1,7 +1,7 @@
+import { Button, Link } from "react-desktop/macOs";
 import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Button } from "react-desktop/macOs";
 import Container from "./Container";
 import { Eye } from "styled-icons/icomoon/Eye";
 import { EyeBlocked } from "styled-icons/icomoon/EyeBlocked";
@@ -11,8 +11,10 @@ import Input from "./Input";
 import InputLabel from "./InputLabel";
 import Left from "./Left";
 import Right from "./Right";
+import Sentinels from "./Sentinels";
 import Styled from "./styled";
 import addRedisClientAction from "./../../../../../../state/actions/addRedisClientAction";
+import addSentinelAction from "../../../../../../state/actions/addSentinelAction";
 import connectRedisClientAction from "./../../../../../../state/actions/connectRedisClientAction";
 import editRedisClientAction from "../../../../../../state/actions/editRedisClientAction";
 import isEditingClientSelector from "../../../../../../state/selectors/isEditingClientSelector";
@@ -32,9 +34,10 @@ const IconEyeBlocked = styled(EyeBlocked)`
 
 const fields = [
     { label: "Nome", inputKey: "name", required: true },
-    { label: "Host", inputKey: "host", required: true },
-    { label: "Port", inputKey: "port" },
+    { label: "Master", inputKey: "master", required: false },
     { label: "Password", inputKey: "password", password: true }
+    // { label: "Host", inputKey: "host", required: true },
+    // { label: "Port", inputKey: "port" }
 ];
 
 const ClientForm = () => {
@@ -45,6 +48,7 @@ const ClientForm = () => {
     const connect = useCallback(() => dispatch(connectRedisClientAction(true)), [dispatch]);
     const editRedisClient = useCallback(() => dispatch(editRedisClientAction(-1)), [dispatch]);
     const saveRedisClient = useCallback(() => dispatch(saveRedisClientAction()), [dispatch]);
+    const addSentinel = useCallback(() => dispatch(addSentinelAction()), [dispatch]);
     return (
         <Styled
             onSubmit={e => {
@@ -88,6 +92,13 @@ const ClientForm = () => {
                         </Right>
                     </Field>
                 ))}
+                <Sentinels />
+                <Field>
+                    <Left></Left>
+                    <Right>
+                        <Link onClick={addSentinel}>Aggiungi host</Link>
+                    </Right>
+                </Field>
             </Container>
             <Footer>
                 <Left inverted={true}>

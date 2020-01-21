@@ -21,6 +21,9 @@ export default styled.div`
         margin: 0;
         padding-bottom: 1.2rem;
         user-select: auto;
+        code {
+            outline: none;
+        }
     }
     .searched {
         background-color: #015cff !important;
