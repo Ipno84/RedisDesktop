@@ -21,12 +21,28 @@ const Item = ({ item, index }) => {
     const editRedisClient = useCallback(index => dispatch(editRedisClientAction(index)), [dispatch]);
     const onContextMenu = useCallback(
         e => {
+            const copyMenuItems = Object.keys(item).map(key => {
+                return {
+                    label: key,
+                    click: () => navigator.clipboard.writeText(item[key])
+                };
+            });
+            let copySubMenu;
+            if (copyMenuItems.length) {
+                copySubMenu = createContextMenu(copyMenuItems);
+            }
             const menuItems = [
                 {
                     label: "Modifica",
                     click: () => editRedisClient(index)
+                },
+                {
+                    label: "Copia"
                 }
             ];
+            if (copySubMenu) {
+                menuItems[1].submenu = copySubMenu;
+            }
             const menu = createContextMenu(menuItems);
             menu.popup();
         },
