@@ -24,7 +24,7 @@ const Item = ({ item, index }) => {
             const copyMenuItems = Object.keys(item).map(key => {
                 return {
                     label: key,
-                    click: () => navigator.clipboard.writeText(item[key])
+                    click: () => navigator.clipboard.writeText(item[key]).catch(e => console.error(e))
                 };
             });
             let copySubMenu;
@@ -44,9 +44,9 @@ const Item = ({ item, index }) => {
                 menuItems[1].submenu = copySubMenu;
             }
             const menu = createContextMenu(menuItems);
-            menu.popup();
+            if (document.hasFocus()) menu.popup();
         },
-        [editRedisClient, index]
+        [editRedisClient, index, item]
     );
     useEffect(() => {
         const currentItem = itemRef.current;

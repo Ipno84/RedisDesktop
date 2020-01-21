@@ -248,7 +248,8 @@ export default (state = initialState, action) => {
                     host: host ? host : "",
                     port: port ? port : "",
                     password: password ? password : ""
-                }
+                },
+                activeConnectedClientIndex: initialState.activeConnectedClientIndex
             };
         case SAVE_REDIS_CLIENT:
             if (state.editingIndex === -1) {
