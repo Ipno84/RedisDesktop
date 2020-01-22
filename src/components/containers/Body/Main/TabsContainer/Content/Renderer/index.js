@@ -56,7 +56,7 @@ const Renderer = () => {
     }, [parser, value, codeWrapper]);
     return (
         <>
-            <Styled ref={codeWrapper}>
+            <Styled ref={codeWrapper} isEditing={isEditing}>
                 <Box>
                     {value && (
                         <pre>

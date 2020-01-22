@@ -1,7 +1,9 @@
+import { put, select } from "redux-saga/effects";
+
+import { SET_CURRENT_EDITED_VALUE } from "../../../../constants/RedisClientsConstants";
 import getActiveConnectedClientKeyEditedValueSelector from "../../../selectors/getActiveConnectedClientKeyEditedValueSelector";
 import getActiveConnectedClientSelectedKeySelector from "../../../selectors/getActiveConnectedClientSelectedKeySelector";
 import getActiveConnectedClientSelector from "../../../selectors/getActiveConnectedClientSelector";
-import { select } from "redux-saga/effects";
 import unserialize from "../../../../helpers/unserialize";
 
 export default function* setRemoteValueSuccessSaga() {
@@ -12,6 +14,7 @@ export default function* setRemoteValueSuccessSaga() {
         if (client && client.client) {
             unserialize(editedValue);
             client.client.set(selectedKey, editedValue);
+            yield put({ type: SET_CURRENT_EDITED_VALUE });
         }
     } catch (error) {
         console.error("open modal", error.message);
