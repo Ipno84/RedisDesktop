@@ -1,6 +1,7 @@
-import { REMOVE_REDIS_CLIENT_MODAL_KEY, SET_REMOTE_VALUE_MODAL_KEY } from "../../../../constants/ModalsConstants";
+import { DELETE_REMOTE_KEY_MODAL_KEY, REMOVE_REDIS_CLIENT_MODAL_KEY, SET_REMOTE_VALUE_MODAL_KEY } from "../../../../constants/ModalsConstants";
 
 import Backdraw from "./Backdraw";
+import ConfirmDeleteRemoteKeyModal from "./ConfirmDeleteRemoteKeyModal";
 import ConfirmRedisClientDeletationModal from "./ConfirmRedisClientDeletationModal";
 import ConfirmSetRemoteValueModal from "./ConfirmSetRemoteValueModal";
 import React from "react";
@@ -11,7 +12,8 @@ import { useSelector } from "react-redux";
 
 const modalsMap = {
     [REMOVE_REDIS_CLIENT_MODAL_KEY]: ConfirmRedisClientDeletationModal,
-    [SET_REMOTE_VALUE_MODAL_KEY]: ConfirmSetRemoteValueModal
+    [SET_REMOTE_VALUE_MODAL_KEY]: ConfirmSetRemoteValueModal,
+    [DELETE_REMOTE_KEY_MODAL_KEY]: ConfirmDeleteRemoteKeyModal
 };
 
 const Modals = () => {

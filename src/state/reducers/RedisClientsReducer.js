@@ -3,6 +3,7 @@ import {
     ADD_SENTINEL,
     CLOSE_MODAL,
     CONNECT_REDIS_CLIENT,
+    DELETE_REMOTE_KEY,
     DISCONNECT_REDIS_CLIENT,
     EDIT_REDIS_CLIENT,
     REMOVE_REDIS_ClIENT,
@@ -27,10 +28,10 @@ import {
     SET_SELECTED_CLIENT_INDEX,
     TOGGLE_FULLSCREEN_TERMINAL
 } from "./../../constants/RedisClientsConstants";
-import { REMOVE_REDIS_CLIENT_MODAL_KEY, SET_REMOTE_VALUE_MODAL_KEY } from "../../constants/ModalsConstants";
+import { CANCEL, CONFIRM, SUCCESS } from "./../../constants/BaseConstants";
+import { DELETE_REMOTE_KEY_MODAL_KEY, REMOVE_REDIS_CLIENT_MODAL_KEY, SET_REMOTE_VALUE_MODAL_KEY } from "../../constants/ModalsConstants";
 
 import { REDIS_CLIENTS_REDUCER_NAME } from "../../constants/StoreConstants";
-import { SUCCESS } from "./../../constants/BaseConstants";
 import { createTransform } from "redux-persist";
 
 export const initialState = {
@@ -58,7 +59,8 @@ export const initialState = {
         isActive: false,
         results: [],
         selectedItemIndex: -1
-    }
+    },
+    deletingKey: ""
 };
 
 export const RedisClientsReducerTransform = createTransform(
@@ -76,7 +78,8 @@ export const RedisClientsReducerTransform = createTransform(
             modals: initialState.modals,
             isTerminalFullscreen: initialState.isTerminalFullscreen,
             editingIndex: -1,
-            search: initialState.search
+            search: initialState.search,
+            deletingKey: initialState.deletingKey
         };
     },
     { whitelist: [REDIS_CLIENTS_REDUCER_NAME] }
@@ -371,6 +374,32 @@ export default (state = initialState, action) => {
                     sentinels: [...state.form.sentinels.slice(0, action.index), ...state.form.sentinels.slice(action.index + 1)]
                 },
                 formKeyErrors: initialState.formKeyErrors
+            };
+        case DELETE_REMOTE_KEY:
+            return {
+                ...state,
+                deletingKey: action.key,
+                modals: [...state.modals, DELETE_REMOTE_KEY_MODAL_KEY]
+            };
+        case DELETE_REMOTE_KEY + CANCEL:
+        case DELETE_REMOTE_KEY + SUCCESS:
+            return {
+                ...state,
+                deletingKey: initialState.deletingKey
+            };
+        case DELETE_REMOTE_KEY + CONFIRM:
+            const client = state.connectedClients[state.activeConnectedClientIndex];
+            const keyIndex = client.keys.indexOf(state.deletingKey);
+            return {
+                ...state,
+                connectedClients: [
+                    ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
+                    {
+                        ...client,
+                        keys: [...client.keys.slice(0, keyIndex), ...client.keys.slice(keyIndex + 1)]
+                    },
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
+                ]
             };
         default:
             return state;
