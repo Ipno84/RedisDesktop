@@ -1,16 +1,19 @@
 import { createSelector } from "reselect";
-import getConnectedRedisClientHostSelector from "./getConnectedRedisClientHostSelector";
+import getConnectedRedisClientMasterSelector from "./getConnectedRedisClientMasterSelector";
 import getConnectedRedisClientPasswordSelector from "./getConnectedRedisClientPasswordSelector";
-import getConnectedRedisClientPortSelector from "./getConnectedRedisClientPortSelector";
+import getConnectedRedisClientSentinelsSelector from "./getConnectedRedisClientSentinelsSelector";
 import { remote } from "electron";
 
 const redisCliPath = remote.getGlobal("redisCliPath");
 
 export default createSelector(
-    getConnectedRedisClientHostSelector,
-    getConnectedRedisClientPortSelector,
+    getConnectedRedisClientMasterSelector,
     getConnectedRedisClientPasswordSelector,
-    (host, port, password) => {
+    getConnectedRedisClientSentinelsSelector,
+    (master, password, sentinels) => {
+        const host = sentinels[0].host;
+        let port = sentinels[0].port;
+        if (parseInt(port) === 26379) port = 6379;
         let commands = ["node", redisCliPath];
         if (host) commands.push(`-h ${host}`);
         if (port) commands.push(`-p ${port}`);

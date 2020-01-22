@@ -1,5 +1,5 @@
 import { Button, Dialog } from "react-desktop/macOs";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { batch, useDispatch, useSelector } from "react-redux";
 
 import closeModalAction from "./../../../../state/actions/closeModalAction";
@@ -18,6 +18,11 @@ const ConfirmRedisClientDeletationModal = ({ index }) => {
             }),
         [dispatch, index]
     );
+    useEffect(() => {
+        if (document.activeElement) {
+            document.activeElement.blur();
+        }
+    });
     return (
         <Dialog
             title="Conferma cancellazione"

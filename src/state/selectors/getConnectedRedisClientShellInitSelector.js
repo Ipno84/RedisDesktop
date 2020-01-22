@@ -1,10 +1,4 @@
 import { createSelector } from "reselect";
-import getConnectedRedisClientHostSelector from "./getConnectedRedisClientHostSelector";
-import getConnectedRedisClientPortSelector from "./getConnectedRedisClientPortSelector";
+import getConnectedRedisClientNameSelector from "./getConnectedRedisClientNameSelector";
 
-export default createSelector(getConnectedRedisClientHostSelector, getConnectedRedisClientPortSelector, (host, port) => {
-    let commands = [];
-    if (host) commands.push(host);
-    if (port) commands.push(port);
-    return `${commands.join(":")}> `;
-});
+export default createSelector(getConnectedRedisClientNameSelector, name => `${name}> `);
