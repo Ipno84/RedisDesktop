@@ -291,16 +291,11 @@ export default (state = initialState, action) => {
         case TOGGLE_FULLSCREEN_TERMINAL:
             return { ...state, isTerminalFullscreen: !state.isTerminalFullscreen };
         case EDIT_REDIS_CLIENT:
-            const { name, host, port, password } = action.index !== -1 ? state.clients[action.index] : {};
             return {
                 ...state,
                 editingIndex: action.index,
-                form: {
-                    name: name ? name : "",
-                    host: host ? host : "",
-                    port: port ? port : "",
-                    password: password ? password : ""
-                },
+                form: action.index !== -1 ? state.clients[action.index] : initialState.form,
+                formKeyErrors: initialState.formKeyErrors,
                 activeConnectedClientIndex: initialState.activeConnectedClientIndex
             };
         case SAVE_REDIS_CLIENT:
