@@ -17,6 +17,7 @@ import addRedisClientAction from "./../../../../../../state/actions/addRedisClie
 import addSentinelAction from "../../../../../../state/actions/addSentinelAction";
 import connectRedisClientAction from "./../../../../../../state/actions/connectRedisClientAction";
 import editRedisClientAction from "../../../../../../state/actions/editRedisClientAction";
+import getFormDataItemSelector from "../../../../../../state/selectors/getFormDataItemSelector";
 import isEditingClientSelector from "../../../../../../state/selectors/isEditingClientSelector";
 import saveRedisClientAction from "../../../../../../state/actions/saveRedisClientAction";
 import styled from "styled-components";
@@ -36,11 +37,10 @@ const fields = [
     { label: "Nome", inputKey: "name", required: true },
     { label: "Master", inputKey: "master", required: false },
     { label: "Password", inputKey: "password", password: true }
-    // { label: "Host", inputKey: "host", required: true },
-    // { label: "Port", inputKey: "port" }
 ];
 
 const ClientForm = () => {
+    const sentinels = useSelector(state => getFormDataItemSelector(state, "sentinels"));
     const isEditing = useSelector(state => isEditingClientSelector(state));
     const [showPassword, toggleShowPassword] = useState(false);
     const dispatch = useDispatch();
@@ -64,7 +64,7 @@ const ClientForm = () => {
                 {fields.map(field => (
                     <Field key={field.label}>
                         <Left>
-                            <InputLabel inputKey={field.inputKey} required={field.required}>
+                            <InputLabel inputKey={field.inputKey} required={field.required || (field.inputKey === "master" && sentinels.length > 1)}>
                                 {field.label}
                             </InputLabel>
                         </Left>

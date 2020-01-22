@@ -15,13 +15,17 @@ const fields = [
     { label: "Port", inputKey: "port" }
 ];
 
-const Sentinels = ({ index }) => {
+const Sentinels = ({ index, count }) => {
     const dispatch = useDispatch();
     const removeSentinel = useCallback(index => dispatch(removeSentinelAction(index)), [dispatch]);
     return (
-        <Styled>
-            <Box margin="0.5rem 1rem 1rem 1rem" padding="1rem">
-                <Text>Sentinel {index + 1}</Text>
+        <Styled bordered={count > 1}>
+            <Box
+                background={count > 1 ? "rgba(0, 0, 0, 0.04)" : "transparent"}
+                margin={count > 1 ? "0.5rem 1rem 1rem 1rem" : "0rem 1rem"}
+                padding={count > 1 ? "1rem" : "0rem 1rem"}
+            >
+                {count > 1 ? <Text>Sentinel {index + 1}</Text> : null}
                 {index ? (
                     <button
                         style={{
@@ -45,9 +49,9 @@ const Sentinels = ({ index }) => {
                     />
                 ) : null}
                 {fields.map(field => (
-                    <Field key={field.label}>
+                    <Field className="inner" key={field.label}>
                         <Left>
-                            <InputLabel inputKey={field.inputKey} required={field.required}>
+                            <InputLabel inputKey={field.inputKey} required={field.required} index={index}>
                                 {field.label}
                             </InputLabel>
                         </Left>

@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 
 const Sentinels = () => {
     const sentinels = useSelector(state => getFormDataItemSelector(state, "sentinels"));
-    return sentinels.map((sentinel, i) => <Sentinel key={i} index={i} />);
+    return sentinels.map((sentinel, i) => <Sentinel key={i} index={i} count={sentinels.length} />);
 };
 
 export default Sentinels;

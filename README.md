@@ -90,3 +90,22 @@ host: redis-12051.c90.us-east-1-3.ec2.cloud.redislabs.com
 port: 12051
 url: redis-12051.c90.us-east-1-3.ec2.cloud.redislabs.com:12051
 password: GEVYidqI7NVg7qBrVLzBSj5LwthsE0VR
+
+# LOCAL REDIS DATA
+
+password: logispin
+sentinels:
+
+-   master: local
+-   nodes: 192.168.70.77:26379
+
+timeout: 100
+
+# NIGERIA INT DATA
+
+[Redis.palimpsest]
+parameters = ['tcp://10.7.22.26:26379?timeout=0.100', 'tcp://10.7.22.27:26379?timeout=0.100', 'tcp://10.7.22.28:26379?timeout=0.100']
+options.replication = 'sentinel'
+options.service = '9ja-master'
+options.parameters.password = 'logispin'
+options.parameters.persistent = true

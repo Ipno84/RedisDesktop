@@ -40,8 +40,6 @@ export const initialState = {
     selectedClientIndex: -1,
     form: {
         name: "",
-        host: "",
-        port: "",
         master: "",
         password: "",
         sentinels: [
@@ -134,11 +132,28 @@ export default (state = initialState, action) => {
                 formKeyErrors: initialState.formKeyErrors
             };
         case SET_FORM_DATA_ITEM:
+            if (action.index === undefined) {
+                return {
+                    ...state,
+                    form: {
+                        ...state.form,
+                        [action.key]: action.value
+                    },
+                    formKeyErrors: initialState.formKeyErrors
+                };
+            }
             return {
                 ...state,
                 form: {
                     ...state.form,
-                    [action.key]: action.value
+                    sentinels: [
+                        ...state.form.sentinels.slice(0, action.index),
+                        {
+                            ...state.form.sentinels[action.index],
+                            [action.key]: action.value
+                        },
+                        ...state.form.sentinels.slice(action.index + 1)
+                    ]
                 },
                 formKeyErrors: initialState.formKeyErrors
             };
@@ -347,11 +362,11 @@ export default (state = initialState, action) => {
         case ADD_SENTINEL:
             return {
                 ...state,
-                formKeyErrors: initialState.formKeyErrors,
                 form: {
                     ...state.form,
                     sentinels: [...state.form.sentinels, { ...initialState.form.sentinels[0] }]
-                }
+                },
+                formKeyErrors: initialState.formKeyErrors
             };
         case REMOVE_SENTINEL:
             return {
@@ -359,7 +374,8 @@ export default (state = initialState, action) => {
                 form: {
                     ...state.form,
                     sentinels: [...state.form.sentinels.slice(0, action.index), ...state.form.sentinels.slice(action.index + 1)]
-                }
+                },
+                formKeyErrors: initialState.formKeyErrors
             };
         default:
             return state;

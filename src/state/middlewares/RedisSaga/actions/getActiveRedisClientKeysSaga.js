@@ -8,7 +8,7 @@ export default function* getActiveRedisClientKeysSaga({ value }) {
         const client = yield select(getActiveConnectedClientSelector);
         if (client && client.client) {
             client.client.keys(`${value}`, function(err, res) {
-                store.dispatch({ type: SET_ACTIVE_REDIS_CLIENT_KEYS, keys: res.sort() });
+                if (res) store.dispatch({ type: SET_ACTIVE_REDIS_CLIENT_KEYS, keys: res.sort() });
             });
         }
     } catch (error) {}

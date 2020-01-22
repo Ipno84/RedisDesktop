@@ -7,15 +7,15 @@ import { TextInput } from "react-desktop/macOs";
 import getFormDataItemSelector from "../../../../../../../state/selectors/getFormDataItemSelector";
 import setFormDataItemAction from "../../../../../../../state/actions/setFormDataItemAction";
 
-const Input = ({ inputKey, password }) => {
-    const value = useSelector(state => getFormDataItemSelector(state, inputKey));
+const Input = ({ inputKey, password, index }) => {
+    const value = useSelector(state => getFormDataItemSelector(state, inputKey, index));
     const dispatch = useDispatch();
-    const setFormDataItem = useCallback(value => dispatch(setFormDataItemAction(inputKey, value)), [dispatch, inputKey]);
+    const setFormDataItem = useCallback(value => dispatch(setFormDataItemAction(inputKey, value, index)), [dispatch, inputKey, index]);
     return (
         <>
             <TextInput password={password ? true : false} value={value} onChange={e => setFormDataItem(e.target.value)} />
             <Styled>
-                <Error inputKey={inputKey} />
+                <Error inputKey={inputKey} index={index} />
             </Styled>
         </>
     );
