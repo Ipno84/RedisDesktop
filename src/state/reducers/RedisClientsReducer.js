@@ -298,7 +298,7 @@ export default (state = initialState, action) => {
                 formKeyErrors: initialState.formKeyErrors,
                 activeConnectedClientIndex: initialState.activeConnectedClientIndex
             };
-        case SAVE_REDIS_CLIENT:
+        case SAVE_REDIS_CLIENT + SUCCESS:
             if (state.editingIndex === -1) {
                 return { ...state };
             }
