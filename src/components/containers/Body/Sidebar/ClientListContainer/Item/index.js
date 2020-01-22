@@ -21,16 +21,43 @@ const Item = ({ item, index }) => {
     const editRedisClient = useCallback(index => dispatch(editRedisClientAction(index)), [dispatch]);
     const onContextMenu = useCallback(
         e => {
-            const copyMenuItems = Object.keys(item).map(key => {
-                return {
-                    label: key,
-                    click: () => navigator.clipboard.writeText(item[key]).catch(e => console.error(e))
-                };
+            let copyMenuItems = Object.keys(item)
+                .map(key => {
+                    if (typeof item[key] === "string") {
+                        return {
+                            label: key,
+                            click: () => navigator.clipboard.writeText(item[key]).catch(e => console.error(e))
+                        };
+                    }
+                    return null;
+                })
+                .filter(e => e);
+            copyMenuItems.push({ type: "separator" });
+
+            // INIT SENTINELS MENUS
+            item.sentinels.forEach((sentinel, i) => {
+                const sentinelMenuItems = Object.keys(sentinel)
+                    .map(key => {
+                        if (typeof sentinel[key] === "string") {
+                            return {
+                                label: key,
+                                click: () => navigator.clipboard.writeText(sentinel[key]).catch(e => console.error(e))
+                            };
+                        }
+                        return null;
+                    })
+                    .filter(e => e);
+                copyMenuItems.push({
+                    label: `Sentinel ${i + 1}`,
+                    submenu: createContextMenu(sentinelMenuItems)
+                });
             });
+            // END SENTINELS MENUS
             let copySubMenu;
             if (copyMenuItems.length) {
                 copySubMenu = createContextMenu(copyMenuItems);
             }
+
             const menuItems = [
                 {
                     label: "Modifica",
