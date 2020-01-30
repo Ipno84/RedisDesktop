@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ButtonContainer from "./ButtonContainer";
 import Input from "./Input";
 import Styled from "./styled";
+import getDomElementsSelector from "./../../../../../../../state/selectors/ListSelectors/getDomElementsSelector";
 import getSearchResultsSelector from "./../../../../../../../state/selectors/getSearchResultsSelector";
 import getSearchSelectedItemIndexSelector from "./../../../../../../../state/selectors/getSearchSelectedItemIndexSelector";
 import isSearchActiveSelector from "./../../../../../../../state/selectors/isSearchActiveSelector";
@@ -19,6 +20,7 @@ const Search = () => {
     const searchResults = useSelector(state => getSearchResultsSelector(state));
 
     const searchSelectedItemIndex = useSelector(state => getSearchSelectedItemIndexSelector(state));
+    const domElements = useSelector(state => getDomElementsSelector(state));
 
     const searchWrapper = useRef(null);
 
@@ -47,14 +49,17 @@ const Search = () => {
 
     useEffect(() => {
         if (searchSelectedItemIndex !== -1) {
-            const element = searchResults[searchSelectedItemIndex];
-            if (element) {
-                const scroller = searchWrapper.current.previousElementSibling;
-                scroller.scrollTop = element.offsetTop - scroller.offsetTop;
-                scroller.scrollLeft = element.offsetLeft - scroller.offsetLeft;
+            const searchIndex = searchResults[searchSelectedItemIndex];
+            if (searchIndex) {
+                const element = domElements[searchIndex];
+                if (element) {
+                    const scroller = searchWrapper.current.previousElementSibling;
+                    scroller.scrollTop = element.offsetTop - scroller.offsetTop;
+                    scroller.scrollLeft = element.offsetLeft - scroller.offsetLeft;
+                }
             }
         }
-    }, [searchSelectedItemIndex, searchResults]);
+    }, [searchSelectedItemIndex, domElements, searchResults]);
 
     useEffect(() => {
         if (isSearchActive) {
