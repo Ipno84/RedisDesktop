@@ -45,7 +45,7 @@ const Item = ({ children, style }) => {
 
     return (
         <div style={style}>
-            <Styled ref={itemRef} isActive={isCurrentKeyActive} onClick={() => setActiveRedisSelectedKey()}>
+            <Styled ref={itemRef} isActive={isCurrentKeyActive} onClick={() => !isCurrentKeyActive && setActiveRedisSelectedKey()}>
                 {children}
             </Styled>
         </div>

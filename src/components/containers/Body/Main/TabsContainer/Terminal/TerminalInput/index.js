@@ -40,6 +40,9 @@ const TerminalInput = () => {
                     responseRef.current = "";
                 }, 100);
             });
+            res.stderr.on("end", response => {
+                setRedisShell({ response });
+            });
             res.stderr.on("data", response => {
                 setRedisShell({ response });
             });

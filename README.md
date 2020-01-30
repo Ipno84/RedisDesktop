@@ -84,6 +84,8 @@ http://www.cs.millersville.edu/~gzoppetti/InstallingGccMac.html
 3. Download prerequisites from the command line (./contrib/download_prerequisites)
 4. Launch from the command line ./configure; make; make install
 
+https://github.com/johndyer24/electron-cra-example
+
 # REMOTE REDIS DATA (for testing purpose)
 
 host: redis-12051.c90.us-east-1-3.ec2.cloud.redislabs.com

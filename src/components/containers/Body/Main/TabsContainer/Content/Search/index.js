@@ -36,7 +36,7 @@ const Search = () => {
         [setSearchVisibility, isSearchActive]
     );
 
-    useHotkeys(command, () => setSearchVisibility(prevState => !prevState));
+    useHotkeys(command, () => setSearchVisibility(!isSearchActive));
 
     useEffect(() => {
         document.addEventListener("keyup", onEscKey, false);

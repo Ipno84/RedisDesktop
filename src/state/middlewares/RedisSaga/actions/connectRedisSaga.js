@@ -7,11 +7,11 @@ import getConnectedClientIndexSelector from "../../../selectors/getConnectedClie
 import getErrorsCount from "../../../../helpers/getErrorsCount";
 import getFormDataSelector from "./../../../selectors/getFormDataSelector";
 import getSelectedRedisClientDataSelector from "./../../../selectors/getSelectedRedisClientDataSelector";
-import { remote } from "electron";
-import { store } from "../../../store";
+// import { remote } from "electron";
+// import { store } from "../../../store";
 import validateFormData from "../../../../helpers/validateFormData";
 
-const redisCliPath = remote.getGlobal("redisCliPath");
+// const redisCliPath = remote.getGlobal("redisCliPath");
 
 export default function* connectRedisSaga({ isForm }) {
     try {
@@ -50,25 +50,27 @@ export default function* connectRedisSaga({ isForm }) {
                     if (data.sentinels && data.sentinels.length && data.sentinels[0].host) connectionData.host = data.host;
                 }
                 const connectedClient = new Redis(connectionData);
-
-                var stream = connectedClient.scanStream({ count: 999999999 });
-                stream.on("data", function() {
-                    let commands = ["node", redisCliPath];
-                    const host = connectedClient.stream.remoteAddress;
-                    const port = connectedClient.stream.remotePort;
-                    const password = data.password;
-                    if (host) commands.push(`-h ${host}`);
-                    if (port) commands.push(`-p ${port}`);
-                    if (password) commands.push(`-a ${password}`);
-
-                    store.dispatch({
-                        type: CONNECT_REDIS_CLIENT + SUCCESS,
-                        connectedClient: { ...data, client: connectedClient, shellConnectionPrefix: commands.join(" ") }
-                    });
+                yield put({
+                    type: CONNECT_REDIS_CLIENT + SUCCESS,
+                    connectedClient: { ...data, client: connectedClient, shellConnectionPrefix: "" }
                 });
+
+                // var stream = connectedClient.scanStream({ count: 999999999 });
+                // stream.on("data", function() {
+                //     let commands = ["node", redisCliPath];
+                //     const host = connectedClient.stream.remoteAddress;
+                //     const port = connectedClient.stream.remotePort;
+                //     const password = data.password;
+                //     if (host) commands.push(`-h ${host}`);
+                //     if (port) commands.push(`-p ${port}`);
+                //     if (password) commands.push(`-a ${password}`);
+
+                //     store.dispatch({
+                //         type: CONNECT_REDIS_CLIENT + SUCCESS,
+                //         connectedClient: { ...data, client: connectedClient, shellConnectionPrefix: commands.join(" ") }
+                //     });
+                // });
             }
         }
-    } catch (error) {
-        debugger;
-    }
+    } catch (error) {}
 }

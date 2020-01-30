@@ -5,14 +5,15 @@ export default styled.div`
     flex: 1;
     display: flex;
     overflow: auto;
-    word-break: break-all;
+    /* word-break: break-all; */
     user-select: auto !important;
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth; */
     border-radius: 5px;
-    transition: all 0.15s ease;
+    /* transition: all 0.15s ease; */
     * {
         user-select: auto !important;
         cursor: text;
+        box-sizing: border-box;
         &::selection {
             background-color: #015cff !important;
             color: #fff !important;
@@ -22,16 +23,23 @@ export default styled.div`
         margin: 0;
         padding-bottom: 1.2rem;
         user-select: auto;
+        /* height: 100%; */
+        display: block;
+        height: auto;
         code {
             outline: none;
+            display: block;
         }
+    }
+    .hidden {
+        visibility: hidden;
     }
     .searched {
         background-color: #015cff !important;
     }
-    code {
+    /* code {
         transition: color 0.15s ease;
-    }
+    } */
     ${props =>
         props.isEditing
             ? css`

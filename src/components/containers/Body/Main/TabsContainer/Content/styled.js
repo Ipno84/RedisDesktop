@@ -6,7 +6,8 @@ export default styled.div`
     padding: 1rem;
     box-sizing: border-box;
     flex-direction: column;
-    height: calc(100vh - 15.6rem);
-    max-width: 67.35vw;
+    /* height: calc(100vh - 15.6rem); */
+    height: calc(100vh - 1.7rem);
+    overflow: hidden;
     position: relative;
 `;
