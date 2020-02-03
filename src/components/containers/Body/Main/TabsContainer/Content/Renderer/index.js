@@ -65,15 +65,19 @@ const Renderer = () => {
 
     useEffect(() => {
         if (value) {
-            switch (parser) {
-                case "php":
-                    setChunkedTokens(Prism.tokenize(var_dump(unserialize(value)).toString(), Prism.languages.php));
-                    break;
-                case "javascript":
-                    setChunkedTokens(Prism.tokenize(JSON.stringify(unserialize(value), null, 4), Prism.languages.javascript));
-                    break;
-                default:
-                    setHtml(value);
+            if (!parser) {
+                setHtml(value);
+            } else {
+                try {
+                    let content = unserialize(value);
+                    if (parser === "php") content = var_dump(content).toString();
+                    if (parser === "javascript") content = JSON.stringify(content, null, 4);
+                    content = Prism.tokenize(content, Prism.languages[parser]);
+                    setChunkedTokens(content);
+                } catch (error) {
+                    const errorMessage = "È stato riscontrato un errore durante il parsing. Il dato potrebbe essere formattato in maniera errata.";
+                    setChunkedTokens(Prism.tokenize(JSON.stringify(errorMessage), Prism.languages.javascript));
+                }
             }
         }
     }, [value, parser, setHtml, setChunkedTokens]);
