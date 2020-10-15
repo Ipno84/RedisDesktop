@@ -1,11 +1,13 @@
 import {
     ADD_REDIS_CLIENT,
     ADD_SENTINEL,
+    CLOSE_GENERIC_ERROR_MODAL,
     CLOSE_MODAL,
     CONNECT_REDIS_CLIENT,
     DELETE_REMOTE_KEY,
     DISCONNECT_REDIS_CLIENT,
     EDIT_REDIS_CLIENT,
+    OPEN_GENERIC_ERROR_MODAL,
     REMOVE_REDIS_ClIENT,
     REMOVE_SENTINEL,
     RESET_FORM_DATA,
@@ -26,10 +28,15 @@ import {
     SET_SEARCH_SELECTED_ITEM_INDEX,
     SET_SEARCH_VISIBILITY,
     SET_SELECTED_CLIENT_INDEX,
-    TOGGLE_FULLSCREEN_TERMINAL
+    TOGGLE_FULLSCREEN_TERMINAL,
 } from "./../../constants/RedisClientsConstants";
 import { CANCEL, CONFIRM, SUCCESS } from "./../../constants/BaseConstants";
-import { DELETE_REMOTE_KEY_MODAL_KEY, REMOVE_REDIS_CLIENT_MODAL_KEY, SET_REMOTE_VALUE_MODAL_KEY } from "../../constants/ModalsConstants";
+import {
+    DELETE_REMOTE_KEY_MODAL_KEY,
+    GENERIC_ERROR_MODAL_KEY,
+    REMOVE_REDIS_CLIENT_MODAL_KEY,
+    SET_REMOTE_VALUE_MODAL_KEY,
+} from "../../constants/ModalsConstants";
 
 import { REDIS_CLIENTS_REDUCER_NAME } from "../../constants/StoreConstants";
 import { createTransform } from "redux-persist";
@@ -46,28 +53,32 @@ export const initialState = {
         sentinels: [
             {
                 host: "",
-                port: ""
-            }
-        ]
+                port: "",
+            },
+        ],
     },
     formKeyErrors: {},
     modals: [],
+    modalError: {
+        title: "",
+        message: "",
+    },
     isTerminalFullscreen: false,
     editingIndex: -1,
     search: {
         keyword: "",
         isActive: false,
         results: [],
-        selectedItemIndex: -1
+        selectedItemIndex: -1,
     },
-    deletingKey: ""
+    deletingKey: "",
 };
 
 export const RedisClientsReducerTransform = createTransform(
-    inboundState => {
+    (inboundState) => {
         return { ...inboundState };
     },
-    outboundState => {
+    (outboundState) => {
         return {
             ...outboundState,
             connectedClients: initialState.connectedClients,
@@ -76,10 +87,11 @@ export const RedisClientsReducerTransform = createTransform(
             form: initialState.form,
             formKeyErrors: initialState.formKeyErrors,
             modals: initialState.modals,
+            modalError: initialState.modalError,
             isTerminalFullscreen: initialState.isTerminalFullscreen,
             editingIndex: -1,
             search: initialState.search,
-            deletingKey: initialState.deletingKey
+            deletingKey: initialState.deletingKey,
         };
     },
     { whitelist: [REDIS_CLIENTS_REDUCER_NAME] }
@@ -93,14 +105,14 @@ export default (state = initialState, action) => {
                 clients: [...state.clients, action.client],
                 form: initialState.form,
                 formKeyErrors: initialState.formKeyErrors,
-                editingIndex: initialState.editingIndex
+                editingIndex: initialState.editingIndex,
             };
         case REMOVE_REDIS_ClIENT:
             return {
                 ...state,
                 modals: [...state.modals, REMOVE_REDIS_CLIENT_MODAL_KEY],
                 formKeyErrors: initialState.formKeyErrors,
-                editingIndex: initialState.editingIndex
+                editingIndex: initialState.editingIndex,
             };
         case REMOVE_REDIS_ClIENT + SUCCESS:
             if (state.selectedClientIndex === -1) {
@@ -110,7 +122,7 @@ export default (state = initialState, action) => {
                 ...state,
                 clients: [...state.clients.slice(0, state.selectedClientIndex), ...state.clients.slice(state.selectedClientIndex + 1)],
                 formKeyErrors: initialState.formKeyErrors,
-                editingIndex: initialState.editingIndex
+                editingIndex: initialState.editingIndex,
             };
         case CONNECT_REDIS_CLIENT + SUCCESS:
             return {
@@ -118,7 +130,7 @@ export default (state = initialState, action) => {
                 connectedClients: [...state.connectedClients, action.connectedClient],
                 formKeyErrors: initialState.formKeyErrors,
                 activeConnectedClientIndex: state.connectedClients.length,
-                editingIndex: initialState.editingIndex
+                editingIndex: initialState.editingIndex,
             };
         case DISCONNECT_REDIS_CLIENT + SUCCESS:
             return {
@@ -126,13 +138,13 @@ export default (state = initialState, action) => {
                 connectedClients: [...state.connectedClients.slice(0, action.index), ...state.connectedClients.slice(action.index + 1)],
                 formKeyErrors: initialState.formKeyErrors,
                 activeConnectedClientIndex: state.connectedClients.length - 2,
-                editingIndex: initialState.editingIndex
+                editingIndex: initialState.editingIndex,
             };
         case SET_SELECTED_CLIENT_INDEX:
             return {
                 ...state,
                 selectedClientIndex: action.index,
-                formKeyErrors: initialState.formKeyErrors
+                formKeyErrors: initialState.formKeyErrors,
             };
         case SET_FORM_DATA_ITEM:
             if (action.index === undefined) {
@@ -140,9 +152,9 @@ export default (state = initialState, action) => {
                     ...state,
                     form: {
                         ...state.form,
-                        [action.key]: action.value
+                        [action.key]: action.value,
                     },
-                    formKeyErrors: initialState.formKeyErrors
+                    formKeyErrors: initialState.formKeyErrors,
                 };
             }
             return {
@@ -153,36 +165,36 @@ export default (state = initialState, action) => {
                         ...state.form.sentinels.slice(0, action.index),
                         {
                             ...state.form.sentinels[action.index],
-                            [action.key]: action.value
+                            [action.key]: action.value,
                         },
-                        ...state.form.sentinels.slice(action.index + 1)
-                    ]
+                        ...state.form.sentinels.slice(action.index + 1),
+                    ],
                 },
-                formKeyErrors: initialState.formKeyErrors
+                formKeyErrors: initialState.formKeyErrors,
             };
         case RESET_FORM_DATA:
             return {
                 ...state,
                 form: initialState.form,
                 formKeyErrors: initialState.formKeyErrors,
-                editingIndex: initialState.editingIndex
+                editingIndex: initialState.editingIndex,
             };
         case SET_FORM_DATA_ERROR:
             return {
                 ...state,
-                formKeyErrors: action.formKeyErrors
+                formKeyErrors: action.formKeyErrors,
             };
         case CLOSE_MODAL:
             return {
                 ...state,
                 modals: [...state.modals.slice(0, action.index), ...state.modals.slice(action.index + 1)],
-                formKeyErrors: initialState.formKeyErrors
+                formKeyErrors: initialState.formKeyErrors,
             };
         case SET_ACTIVE_CONNECTED_CLIENT_INDEX:
             return {
                 ...state,
                 activeConnectedClientIndex: action.index,
-                formKeyErrors: initialState.formKeyErrors
+                formKeyErrors: initialState.formKeyErrors,
             };
         case SET_ACTIVE_REDIS_CLIENT_KEYS:
             return {
@@ -191,10 +203,10 @@ export default (state = initialState, action) => {
                     ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
                     {
                         ...state.connectedClients[state.activeConnectedClientIndex],
-                        keys: action.keys
+                        keys: action.keys,
                     },
-                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
-                ]
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                ],
             };
         case SET_ACTIVE_REDIS_SEARCH_KEY:
             return {
@@ -203,10 +215,10 @@ export default (state = initialState, action) => {
                     ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
                     {
                         ...state.connectedClients[state.activeConnectedClientIndex],
-                        searchKey: action.searchKey
+                        searchKey: action.searchKey,
                     },
-                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
-                ]
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                ],
             };
         case SET_CURRENT_KEY:
             return {
@@ -215,10 +227,10 @@ export default (state = initialState, action) => {
                     ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
                     {
                         ...state.connectedClients[state.activeConnectedClientIndex],
-                        selectedKey: action.selectedKey
+                        selectedKey: action.selectedKey,
                     },
-                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
-                ]
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                ],
             };
         case SET_CURRENT_VALUE:
             return {
@@ -227,10 +239,10 @@ export default (state = initialState, action) => {
                     ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
                     {
                         ...state.connectedClients[state.activeConnectedClientIndex],
-                        value: action.value
+                        value: action.value,
                     },
-                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
-                ]
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                ],
             };
         case SET_CURRENT_EDITED_VALUE:
             if (action.editedValue === undefined) {
@@ -240,10 +252,10 @@ export default (state = initialState, action) => {
                     connectedClients: [
                         ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
                         {
-                            ...redisClient
+                            ...redisClient,
                         },
-                        ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
-                    ]
+                        ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                    ],
                 };
             }
             return {
@@ -252,10 +264,10 @@ export default (state = initialState, action) => {
                     ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
                     {
                         ...state.connectedClients[state.activeConnectedClientIndex],
-                        editedValue: action.editedValue
+                        editedValue: action.editedValue,
                     },
-                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
-                ]
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                ],
             };
         case SET_PARSER_TYPE:
             const { editedValue: toRemove, ...redisClient } = state.connectedClients[state.activeConnectedClientIndex];
@@ -265,10 +277,10 @@ export default (state = initialState, action) => {
                     ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
                     {
                         ...redisClient,
-                        parser: action.parser
+                        parser: action.parser,
                     },
-                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
-                ]
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                ],
             };
         case SET_REDIS_SHELL + SUCCESS:
             const isReplace = Boolean(action.shell.response);
@@ -284,12 +296,12 @@ export default (state = initialState, action) => {
                             ? [
                                   ...currentClientShells.slice(0, currentClientShells.length - 1),
                                   action.shell,
-                                  ...currentClientShells.slice(currentClientShells.length)
+                                  ...currentClientShells.slice(currentClientShells.length),
                               ]
-                            : [...currentClientShells, action.shell]
+                            : [...currentClientShells, action.shell],
                     },
-                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
-                ]
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                ],
             };
         case TOGGLE_FULLSCREEN_TERMINAL:
             return { ...state, isTerminalFullscreen: !state.isTerminalFullscreen };
@@ -299,7 +311,7 @@ export default (state = initialState, action) => {
                 editingIndex: action.index,
                 form: action.index !== -1 ? state.clients[action.index] : initialState.form,
                 formKeyErrors: initialState.formKeyErrors,
-                activeConnectedClientIndex: initialState.activeConnectedClientIndex
+                activeConnectedClientIndex: initialState.activeConnectedClientIndex,
             };
         case SAVE_REDIS_CLIENT + SUCCESS:
             if (state.editingIndex === -1) {
@@ -315,77 +327,77 @@ export default (state = initialState, action) => {
                     ...state.clients.slice(0, state.editingIndex),
                     {
                         ...clientData,
-                        ...state.form
+                        ...state.form,
                     },
-                    ...state.clients.slice(state.editingIndex + 1)
-                ]
+                    ...state.clients.slice(state.editingIndex + 1),
+                ],
             };
         case SET_SEARCH_KEYWORD:
             return {
                 ...state,
                 search: {
                     ...state.search,
-                    keyword: action.keyword
-                }
+                    keyword: action.keyword,
+                },
             };
         case SET_SEARCH_VISIBILITY:
             return {
                 ...state,
                 search: {
                     ...state.search,
-                    isActive: action.isActive
-                }
+                    isActive: action.isActive,
+                },
             };
         case SET_SEARCH_RESULTS:
             return {
                 ...state,
                 search: {
                     ...state.search,
-                    results: action.results
-                }
+                    results: action.results,
+                },
             };
         case SET_SEARCH_SELECTED_ITEM_INDEX:
             return {
                 ...state,
                 search: {
                     ...state.search,
-                    selectedItemIndex: action.selectedItemIndex
-                }
+                    selectedItemIndex: action.selectedItemIndex,
+                },
             };
         case SET_REMOTE_VALUE:
             return {
                 ...state,
-                modals: [...state.modals, SET_REMOTE_VALUE_MODAL_KEY]
+                modals: [...state.modals, SET_REMOTE_VALUE_MODAL_KEY],
             };
         case ADD_SENTINEL:
             return {
                 ...state,
                 form: {
                     ...state.form,
-                    sentinels: [...state.form.sentinels, { ...initialState.form.sentinels[0] }]
+                    sentinels: [...state.form.sentinels, { ...initialState.form.sentinels[0] }],
                 },
-                formKeyErrors: initialState.formKeyErrors
+                formKeyErrors: initialState.formKeyErrors,
             };
         case REMOVE_SENTINEL:
             return {
                 ...state,
                 form: {
                     ...state.form,
-                    sentinels: [...state.form.sentinels.slice(0, action.index), ...state.form.sentinels.slice(action.index + 1)]
+                    sentinels: [...state.form.sentinels.slice(0, action.index), ...state.form.sentinels.slice(action.index + 1)],
                 },
-                formKeyErrors: initialState.formKeyErrors
+                formKeyErrors: initialState.formKeyErrors,
             };
         case DELETE_REMOTE_KEY:
             return {
                 ...state,
                 deletingKey: action.key,
-                modals: [...state.modals, DELETE_REMOTE_KEY_MODAL_KEY]
+                modals: [...state.modals, DELETE_REMOTE_KEY_MODAL_KEY],
             };
         case DELETE_REMOTE_KEY + CANCEL:
         case DELETE_REMOTE_KEY + SUCCESS:
             return {
                 ...state,
-                deletingKey: initialState.deletingKey
+                deletingKey: initialState.deletingKey,
             };
         case DELETE_REMOTE_KEY + CONFIRM:
             const client = state.connectedClients[state.activeConnectedClientIndex];
@@ -396,10 +408,28 @@ export default (state = initialState, action) => {
                     ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
                     {
                         ...client,
-                        keys: [...client.keys.slice(0, keyIndex), ...client.keys.slice(keyIndex + 1)]
+                        keys: [...client.keys.slice(0, keyIndex), ...client.keys.slice(keyIndex + 1)],
                     },
-                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1)
-                ]
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                ],
+            };
+        case OPEN_GENERIC_ERROR_MODAL:
+            return {
+                ...state,
+                modals: [...state.modals, GENERIC_ERROR_MODAL_KEY],
+                modalError: {
+                    ...state.modalError,
+                    title: action.title,
+                    message: action.message,
+                },
+            };
+
+        case CLOSE_GENERIC_ERROR_MODAL:
+            const index = state.modals.indexOf(GENERIC_ERROR_MODAL_KEY);
+            return {
+                ...state,
+                modals: [...state.modals.slice(0, index), ...state.modals.slice(index + 1)],
+                modalError: initialState.modalError,
             };
         default:
             return state;

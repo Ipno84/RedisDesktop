@@ -1,4 +1,9 @@
-import { CONNECT_REDIS_CLIENT, SET_ACTIVE_CONNECTED_CLIENT_INDEX, SET_FORM_DATA_ERROR } from "../../../../constants/RedisClientsConstants";
+import {
+    CONNECT_REDIS_CLIENT,
+    OPEN_GENERIC_ERROR_MODAL,
+    SET_ACTIVE_CONNECTED_CLIENT_INDEX,
+    SET_FORM_DATA_ERROR,
+} from "../../../../constants/RedisClientsConstants";
 import { put, select } from "redux-saga/effects";
 
 import Redis from "ioredis";
@@ -7,6 +12,7 @@ import getConnectedClientIndexSelector from "../../../selectors/getConnectedClie
 import getErrorsCount from "../../../../helpers/getErrorsCount";
 import getFormDataSelector from "./../../../selectors/getFormDataSelector";
 import getSelectedRedisClientDataSelector from "./../../../selectors/getSelectedRedisClientDataSelector";
+import { store } from "./../../../store";
 // import { remote } from "electron";
 // import { store } from "../../../store";
 import validateFormData from "../../../../helpers/validateFormData";
@@ -33,12 +39,14 @@ export default function* connectRedisSaga({ isForm }) {
                 yield put({ type: SET_ACTIVE_CONNECTED_CLIENT_INDEX, index: connectedClientIndex });
             } else {
                 let connectionData = {};
+                let retryAttempts = 0;
+                const maxRetryAttempts = 5;
                 if (data.password) connectionData.password = data.password;
                 const isSentinel = data.sentinels.length > 1 || Boolean(data.master);
                 if (isSentinel) {
                     if (data.master) connectionData.name = data.master;
                     let sentinels = [];
-                    data.sentinels.forEach(sentinel => {
+                    data.sentinels.forEach((sentinel) => {
                         let { host, port } = sentinel;
                         const connectionSentinel = { host };
                         if (port) connectionSentinel.port = port;
@@ -50,9 +58,23 @@ export default function* connectRedisSaga({ isForm }) {
                     if (data.sentinels && data.sentinels.length && data.sentinels[0].host) connectionData.host = data.host;
                 }
                 const connectedClient = new Redis(connectionData);
-                yield put({
-                    type: CONNECT_REDIS_CLIENT + SUCCESS,
-                    connectedClient: { ...data, client: connectedClient, shellConnectionPrefix: "" }
+                connectedClient.on("connect", () => {
+                    store.dispatch({
+                        type: CONNECT_REDIS_CLIENT + SUCCESS,
+                        connectedClient: { ...data, client: connectedClient, shellConnectionPrefix: "" },
+                    });
+                });
+                connectedClient.on("error", (err) => {
+                    retryAttempts++;
+                    if (retryAttempts > maxRetryAttempts) {
+                        connectedClient.disconnect();
+                        retryAttempts = 0;
+                        store.dispatch({
+                            type: OPEN_GENERIC_ERROR_MODAL,
+                            title: "Errore di connessione",
+                            message: `Connessione a ${data.name} fallita`,
+                        });
+                    }
                 });
 
                 // var stream = connectedClient.scanStream({ count: 999999999 });

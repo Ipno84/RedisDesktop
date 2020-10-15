@@ -1,9 +1,15 @@
-import { DELETE_REMOTE_KEY_MODAL_KEY, REMOVE_REDIS_CLIENT_MODAL_KEY, SET_REMOTE_VALUE_MODAL_KEY } from "../../../../constants/ModalsConstants";
+import {
+    DELETE_REMOTE_KEY_MODAL_KEY,
+    GENERIC_ERROR_MODAL_KEY,
+    REMOVE_REDIS_CLIENT_MODAL_KEY,
+    SET_REMOTE_VALUE_MODAL_KEY,
+} from "../../../../constants/ModalsConstants";
 
 import Backdraw from "./Backdraw";
 import ConfirmDeleteRemoteKeyModal from "./ConfirmDeleteRemoteKeyModal";
 import ConfirmRedisClientDeletationModal from "./ConfirmRedisClientDeletationModal";
 import ConfirmSetRemoteValueModal from "./ConfirmSetRemoteValueModal";
+import GenericErrorAlert from "./GenericErrorAlert";
 import React from "react";
 import Styled from "./styled";
 import getCurrentActiveModalsSelector from "../../../../state/selectors/getCurrentActiveModalsSelector";
@@ -13,11 +19,12 @@ import { useSelector } from "react-redux";
 const modalsMap = {
     [REMOVE_REDIS_CLIENT_MODAL_KEY]: ConfirmRedisClientDeletationModal,
     [SET_REMOTE_VALUE_MODAL_KEY]: ConfirmSetRemoteValueModal,
-    [DELETE_REMOTE_KEY_MODAL_KEY]: ConfirmDeleteRemoteKeyModal
+    [DELETE_REMOTE_KEY_MODAL_KEY]: ConfirmDeleteRemoteKeyModal,
+    [GENERIC_ERROR_MODAL_KEY]: GenericErrorAlert,
 };
 
 const Modals = () => {
-    const activeModals = useSelector(state => getCurrentActiveModalsSelector(state));
+    const activeModals = useSelector((state) => getCurrentActiveModalsSelector(state));
     const prevActiveModals = usePrev(activeModals) || [];
     const isOpen = activeModals.length > prevActiveModals.length;
     const modals = isOpen ? activeModals : prevActiveModals;
