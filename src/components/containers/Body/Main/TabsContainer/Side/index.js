@@ -1,3 +1,4 @@
+import Mover from "../../../../../Mover";
 import React from "react";
 import Scroll from "./Scroll";
 import Styled from "./styled";
@@ -8,6 +9,7 @@ const Side = () => {
         <Styled>
             <Top />
             <Scroll />
+            <Mover />
         </Styled>
     );
 };

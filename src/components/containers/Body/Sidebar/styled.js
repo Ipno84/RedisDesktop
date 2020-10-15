@@ -7,4 +7,5 @@ export default styled.div`
     display: flex;
     flex-direction: column;
     border-right: 1px solid #dddddd;
+    position: relative;
 `;

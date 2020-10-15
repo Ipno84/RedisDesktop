@@ -5,4 +5,5 @@ export default styled.div`
     width: 13rem;
     border-right: 1px solid #dddddd;
     background-color: #f5f5f4;
+    position: relative;
 `;

@@ -8,8 +8,8 @@ import hasActiveTabsSelector from "../../../../state/selectors/hasActiveTabsSele
 import { useSelector } from "react-redux";
 
 const Main = () => {
-    const hasActiveTabs = useSelector(state => hasActiveTabsSelector(state));
-    const activeConnectedClientIndex = useSelector(state => getActiveConnectedClientIndexSelector(state));
+    const hasActiveTabs = useSelector((state) => hasActiveTabsSelector(state));
+    const activeConnectedClientIndex = useSelector((state) => getActiveConnectedClientIndexSelector(state));
     return (
         <Styled>
             {hasActiveTabs && <Tabs />}
