@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 const itemHeight = 25;
 
 const Scroll = () => {
-    const keys = useSelector(state => getActiveConnectedClientKeysSelector(state));
+    const keys = useSelector((state) => getActiveConnectedClientKeysSelector(state));
     return (
         <Styled>
             <AutoSizer>

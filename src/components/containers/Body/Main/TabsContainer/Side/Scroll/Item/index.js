@@ -12,27 +12,37 @@ const createContextMenu = remote.getGlobal("createContextMenu");
 const Item = ({ children, style }) => {
     const dispatch = useDispatch();
     const itemRef = useRef(null);
-    const isCurrentKeyActive = useSelector(state => isCurrentKeyActiveSelector(state, children));
+    const isCurrentKeyActive = useSelector((state) => isCurrentKeyActiveSelector(state, children));
     const setActiveRedisSelectedKey = useCallback(() => dispatch(setActiveRedisSelectedKeyAction(children)), [dispatch, children]);
-    const deleteRemoteKey = useCallback(key => dispatch(deleteRemoteKeyAction(key)), [dispatch]);
+    const deleteRemoteKey = useCallback((key) => dispatch(deleteRemoteKeyAction(key)), [dispatch]);
 
+    // console.log({ children, isCurrentKeyActive });
     const onContextMenu = useCallback(
-        e => {
+        (e) => {
             window.focus();
             const menuItems = [
                 {
                     label: "Copia",
-                    click: () => navigator.clipboard.writeText(e.target.innerHTML).catch(e => console.error(e))
+                    click: () => navigator.clipboard.writeText(e.target.innerHTML).catch((e) => console.error(e)),
                 },
                 {
                     label: "Cancella",
-                    click: () => deleteRemoteKey(e.target.innerText)
-                }
+                    click: () => deleteRemoteKey(e.target.innerText),
+                },
             ];
             const menu = createContextMenu(menuItems);
             if (document.hasFocus()) menu.popup();
         },
         [deleteRemoteKey]
+    );
+
+    const onItemClick = useCallback(
+        (e) => {
+            const cmdOrCtrl = e.ctrlKey || e.metaKey;
+            const shift = e.shiftKey;
+            !isCurrentKeyActive && setActiveRedisSelectedKey();
+        },
+        [isCurrentKeyActive, setActiveRedisSelectedKey]
     );
 
     useEffect(() => {
@@ -45,7 +55,7 @@ const Item = ({ children, style }) => {
 
     return (
         <div style={style}>
-            <Styled ref={itemRef} isActive={isCurrentKeyActive} onClick={() => !isCurrentKeyActive && setActiveRedisSelectedKey()}>
+            <Styled ref={itemRef} isActive={isCurrentKeyActive} onClick={onItemClick}>
                 {children}
             </Styled>
         </div>
