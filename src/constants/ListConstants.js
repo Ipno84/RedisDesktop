@@ -1,0 +1,6 @@
+export const SET_CHUNKED_TOKENS = "SET_CHUNKED_TOKENS";
+export const SET_HTML = "SET_HTML";
+export const SET_OBSERVER = "SET_OBSERVER";
+export const SET_INDEXES = "SET_INDEXES";
+export const SET_DOM_ELEMENTS = "SET_DOM_ELEMENTS";
+export const SET_LIMIT_INDEXES = "SET_LIMIT_INDEXES";

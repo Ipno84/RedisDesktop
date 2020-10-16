@@ -1,0 +1,48 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "start:react",
+            "type": "npm",
+            "script": "start",
+            "path": "./",
+            "problemMatcher": []
+        },
+        {
+            "label": "start:electron",
+            "type": "npm",
+            "script": "electron",
+            "path": "./",
+            "problemMatcher": []
+        },
+        {
+            "label": "start:all",
+            "dependsOn": ["start:react", "start:electron"]
+        },
+        {
+            "label": "generate:icons",
+            "type": "npm",
+            "script": "icon",
+            "path": "./",
+            "problemMatcher": []
+        },
+        {
+            "label": "build:react",
+            "type": "npm",
+            "script": "build",
+            "path": "./",
+            "problemMatcher": []
+        },
+        {
+            "label": "build:electron",
+            "type": "npm",
+            "script": "dist",
+            "path": "./",
+            "problemMatcher": []
+        },
+        {
+            "label": "build:all",
+            "dependsOn": ["generate:icons", "build:react", "build:electron"]
+        }
+    ]
+}
