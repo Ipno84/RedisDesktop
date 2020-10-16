@@ -9,7 +9,6 @@ export default function* deleteRemoteKeyConfirmSaga() {
     try {
         const client = yield select(getActiveConnectedClientSelector);
         const deletingKey = yield select(getDeletingKeySelector);
-        console.log(deletingKey);
         if (client && client.client) {
             client.client.del(deletingKey);
             yield put({ type: DELETE_REMOTE_KEY + SUCCESS });

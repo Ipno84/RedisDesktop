@@ -12,11 +12,13 @@ export default styled.div`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    ${props =>
-        props.isActive &&
-        css`
-            background: -webkit-linear-gradient(top, rgba(90, 178, 246) 0%, rgb(0, 130, 250) 100%);
-            border-color: rgb(48, 160, 245) rgb(0, 128, 247) rgb(0, 96, 250);
-            color: #fff;
-        `}
+    ${({ isActive, isSelected }) => {
+        if (isActive || isSelected) {
+            return css`
+                background: -webkit-linear-gradient(top, rgba(90, 178, 246) 0%, rgb(0, 130, 250) 100%);
+                border-color: rgb(48, 160, 245) rgb(0, 128, 247) rgb(0, 96, 250);
+                color: #fff;
+            `;
+        }
+    }}
 `;

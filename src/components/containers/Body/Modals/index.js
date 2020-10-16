@@ -1,5 +1,6 @@
 import {
     DELETE_REMOTE_KEY_MODAL_KEY,
+    DELETE_REMOTE_KEY_MODAL_KEYS,
     GENERIC_ERROR_MODAL_KEY,
     REMOVE_REDIS_CLIENT_MODAL_KEY,
     SET_REMOTE_VALUE_MODAL_KEY,
@@ -7,6 +8,7 @@ import {
 
 import Backdraw from "./Backdraw";
 import ConfirmDeleteRemoteKeyModal from "./ConfirmDeleteRemoteKeyModal";
+import ConfirmDeleteRemoteKeysModal from "./ConfirmDeleteRemoteKeysModal";
 import ConfirmRedisClientDeletationModal from "./ConfirmRedisClientDeletationModal";
 import ConfirmSetRemoteValueModal from "./ConfirmSetRemoteValueModal";
 import GenericErrorAlert from "./GenericErrorAlert";
@@ -20,6 +22,7 @@ const modalsMap = {
     [REMOVE_REDIS_CLIENT_MODAL_KEY]: ConfirmRedisClientDeletationModal,
     [SET_REMOTE_VALUE_MODAL_KEY]: ConfirmSetRemoteValueModal,
     [DELETE_REMOTE_KEY_MODAL_KEY]: ConfirmDeleteRemoteKeyModal,
+    [DELETE_REMOTE_KEY_MODAL_KEYS]: ConfirmDeleteRemoteKeysModal,
     [GENERIC_ERROR_MODAL_KEY]: GenericErrorAlert,
 };
 

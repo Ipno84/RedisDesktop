@@ -5,6 +5,7 @@ import {
     CLOSE_MODAL,
     CONNECT_REDIS_CLIENT,
     DELETE_REMOTE_KEY,
+    DELETE_REMOTE_KEYS,
     DISCONNECT_REDIS_CLIENT,
     EDIT_REDIS_CLIENT,
     OPEN_GENERIC_ERROR_MODAL,
@@ -29,10 +30,13 @@ import {
     SET_SEARCH_VISIBILITY,
     SET_SELECTED_CLIENT_INDEX,
     TOGGLE_FULLSCREEN_TERMINAL,
+    TOGGLE_MULTI_SELECTED_KEY,
+    TOGGLE_SELECTED_KEY,
 } from "./../../constants/RedisClientsConstants";
 import { CANCEL, CONFIRM, SUCCESS } from "./../../constants/BaseConstants";
 import {
     DELETE_REMOTE_KEY_MODAL_KEY,
+    DELETE_REMOTE_KEY_MODAL_KEYS,
     GENERIC_ERROR_MODAL_KEY,
     REMOVE_REDIS_CLIENT_MODAL_KEY,
     SET_REMOTE_VALUE_MODAL_KEY,
@@ -72,6 +76,7 @@ export const initialState = {
         selectedItemIndex: -1,
     },
     deletingKey: "",
+    deletingKeys: [],
 };
 
 export const RedisClientsReducerTransform = createTransform(
@@ -228,10 +233,39 @@ export default (state = initialState, action) => {
                     {
                         ...state.connectedClients[state.activeConnectedClientIndex],
                         selectedKey: action.selectedKey,
+                        selectedKeys: [action.selectedKey].filter((e) => e).filter((value, index, self) => self.indexOf(value) === index),
                     },
                     ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
                 ],
             };
+        case TOGGLE_SELECTED_KEY + SUCCESS:
+            return {
+                ...state,
+                connectedClients: [
+                    ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
+                    {
+                        ...state.connectedClients[state.activeConnectedClientIndex],
+                        selectedKey: action.selectedKey,
+                        selectedKeys: action.selectedKeys.filter((e) => e).filter((value, index, self) => self.indexOf(value) === index),
+                    },
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                ],
+            };
+        case TOGGLE_MULTI_SELECTED_KEY + SUCCESS: {
+            return {
+                ...state,
+                connectedClients: [
+                    ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
+                    {
+                        ...state.connectedClients[state.activeConnectedClientIndex],
+                        selectedKeys: [...state.connectedClients[state.activeConnectedClientIndex].selectedKeys, ...action.addedSelectedKeys]
+                            .filter((e) => e)
+                            .filter((value, index, self) => self.indexOf(value) === index),
+                    },
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                ],
+            };
+        }
         case SET_CURRENT_VALUE:
             return {
                 ...state,
@@ -393,11 +427,39 @@ export default (state = initialState, action) => {
                 deletingKey: action.key,
                 modals: [...state.modals, DELETE_REMOTE_KEY_MODAL_KEY],
             };
+        case DELETE_REMOTE_KEYS:
+            return {
+                ...state,
+                deletingKeys: action.keys,
+                modals: [...state.modals, DELETE_REMOTE_KEY_MODAL_KEYS],
+            };
         case DELETE_REMOTE_KEY + CANCEL:
-        case DELETE_REMOTE_KEY + SUCCESS:
             return {
                 ...state,
                 deletingKey: initialState.deletingKey,
+            };
+        case DELETE_REMOTE_KEYS + CANCEL:
+            return {
+                ...state,
+                deletingKeys: initialState.deletingKeys,
+            };
+        case DELETE_REMOTE_KEY + SUCCESS:
+            const drC = state.connectedClients[state.activeConnectedClientIndex];
+            return {
+                ...state,
+                deletingKey: initialState.deletingKey,
+                selectedKeys: drC.selectedKeys.filter((e) => e !== state.deletingKey),
+                selectedKey: drC.selectedKey === state.deletingKey ? "" : drC.selectedKey,
+                value: drC.selectedKey === state.deletingKey ? "" : drC.value,
+            };
+        case DELETE_REMOTE_KEYS + SUCCESS:
+            const drCs = state.connectedClients[state.activeConnectedClientIndex];
+            return {
+                ...state,
+                deletingKeys: initialState.deletingKeys,
+                selectedKeys: drCs.selectedKeys.filter((e) => state.deletingKeys.indexOf(e) === -1),
+                selectedKey: drCs.selectedKeys.join("_") === state.deletingKeys.join("_") ? "" : drCs.selectedKey,
+                value: drCs.selectedKeys.join("_") === state.deletingKeys.join("_") ? "" : drCs.value,
             };
         case DELETE_REMOTE_KEY + CONFIRM:
             const client = state.connectedClients[state.activeConnectedClientIndex];
@@ -409,6 +471,18 @@ export default (state = initialState, action) => {
                     {
                         ...client,
                         keys: [...client.keys.slice(0, keyIndex), ...client.keys.slice(keyIndex + 1)],
+                    },
+                    ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
+                ],
+            };
+        case DELETE_REMOTE_KEYS + CONFIRM:
+            return {
+                ...state,
+                connectedClients: [
+                    ...state.connectedClients.slice(0, state.activeConnectedClientIndex),
+                    {
+                        ...state.connectedClients[state.activeConnectedClientIndex],
+                        keys: state.connectedClients[state.activeConnectedClientIndex].keys.filter((e) => state.deletingKeys.indexOf(e) === -1),
                     },
                     ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
                 ],
