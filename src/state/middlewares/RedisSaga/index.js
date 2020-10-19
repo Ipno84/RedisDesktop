@@ -6,6 +6,7 @@ import disconnectRedisWatcher from "./watchers/disconnectRedisWatcher";
 import { fork } from "redux-saga/effects";
 import getActiveRedisClientKeysWatcher from "./watchers/getActiveRedisClientKeysWatcher";
 import getActiveRedisKeyWatcher from "./watchers/getActiveRedisKeyWatcher";
+import refreshActiveRedisKeyWatcher from "./watchers/refreshActiveRedisKeyWatcher";
 import saveRedisClientWatcher from "./watchers/saveRedisClientWatcher";
 import setRedisShellWatcher from "./watchers/setRedisShellWatcher";
 import setRemoteValueSuccessWatcher from "./watchers/setRemoteValueSuccessWatcher";
@@ -29,4 +30,5 @@ export default function* RedisSaga() {
     yield fork(deleteRemoteKeysConfirmWatcher);
     yield fork(toggleSelectedKeyWatcher);
     yield fork(toggleToggleSelectedKeyWatcher);
+    yield fork(refreshActiveRedisKeyWatcher);
 }

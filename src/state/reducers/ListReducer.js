@@ -1,4 +1,4 @@
-import { SET_ACTIVE_CONNECTED_CLIENT_INDEX, SET_CURRENT_KEY, SET_CURRENT_VALUE, SET_PARSER_TYPE } from "./../../constants/RedisClientsConstants";
+import { SET_ACTIVE_CONNECTED_CLIENT_INDEX, SET_CURRENT_KEY, SET_PARSER_TYPE } from "./../../constants/RedisClientsConstants";
 import { SET_CHUNKED_TOKENS, SET_DOM_ELEMENTS, SET_HTML, SET_INDEXES, SET_LIMIT_INDEXES, SET_OBSERVER } from "./../../constants/ListConstants";
 
 import { LIST_REDUCER_NAME } from "../../constants/StoreConstants";
@@ -12,14 +12,14 @@ export const initialState = {
     indexes: [],
     domElements: [],
     min: -1,
-    max: -1
+    max: -1,
 };
 
 export const ListReducerTransform = createTransform(
-    inboundState => {
+    (inboundState) => {
         return { ...inboundState, domElements: initialState.domElements };
     },
-    outboundState => {
+    (outboundState) => {
         return {
             ...outboundState,
             chunkedTokens: initialState.chunkedTokens,
@@ -28,7 +28,7 @@ export const ListReducerTransform = createTransform(
             indexes: initialState.indexes,
             domElements: initialState.domElements,
             min: initialState.min,
-            max: initialState.max
+            max: initialState.max,
         };
     },
     { blacklist: [LIST_REDUCER_NAME] }
@@ -36,7 +36,7 @@ export const ListReducerTransform = createTransform(
 
 export default (state = initialState, action) => {
     switch (action.type) {
-        case SET_CURRENT_VALUE:
+        // case SET_CURRENT_VALUE:
         case SET_CURRENT_KEY:
         case SET_PARSER_TYPE:
         case SET_ACTIVE_CONNECTED_CLIENT_INDEX:
@@ -47,29 +47,29 @@ export default (state = initialState, action) => {
                 indexes: initialState.indexes,
                 domElements: initialState.domElements,
                 min: initialState.min,
-                max: initialState.max
+                max: initialState.max,
             };
         case SET_LIMIT_INDEXES:
             return {
                 ...state,
                 min: action.min,
-                max: action.max
+                max: action.max,
             };
         case SET_DOM_ELEMENTS:
             return {
                 ...state,
                 domElements: action.domElements,
-                indexes: Object.keys(action.domElements).fill(false)
+                indexes: Object.keys(action.domElements).fill(false),
             };
         case SET_INDEXES + SUCCESS:
             return {
                 ...state,
-                indexes: action.indexes
+                indexes: action.indexes,
             };
         case SET_OBSERVER:
             return {
                 ...state,
-                observer: action.observer
+                observer: action.observer,
             };
         case SET_CHUNKED_TOKENS:
             return {
@@ -88,7 +88,7 @@ export default (state = initialState, action) => {
                             return [...accumulator.slice(0, lastChunkIndex), [currentValue]];
                         }
                     } else return [...accumulator, [currentValue]];
-                }, [])
+                }, []),
             };
         case SET_HTML:
             return { ...state, html: action.html };

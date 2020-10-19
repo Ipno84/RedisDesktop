@@ -274,6 +274,7 @@ export default (state = initialState, action) => {
                     {
                         ...state.connectedClients[state.activeConnectedClientIndex],
                         value: action.value,
+                        ttl: action.ttl,
                     },
                     ...state.connectedClients.slice(state.activeConnectedClientIndex + 1),
                 ],

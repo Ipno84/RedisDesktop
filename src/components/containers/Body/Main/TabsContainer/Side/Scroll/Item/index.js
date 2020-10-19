@@ -7,6 +7,7 @@ import deleteRemoteKeysAction from "./../../../../../../../../state/actions/dele
 import getActiveConnectedClientSelectedKeysSelector from "./../../../../../../../../state/selectors/getActiveConnectedClientSelectedKeysSelector";
 import isCurrentKeyActiveSelector from "./../../../../../../../../state/selectors/isCurrentKeyActiveSelector";
 import isCurrentKeySelectedSelector from "./../../../../../../../../state/selectors/isCurrentKeySelectedSelector";
+import refreshActiveRedisSelectedKeyAction from "./../../../../../../../../state/actions/refreshActiveRedisSelectedKeyAction";
 import { remote } from "electron";
 import setActiveRedisSelectedKeyAction from "./../../../../../../../../state/actions/setActiveRedisSelectedKeyAction";
 import toggleMultiSelectedKeyAction from "./../../../../../../../../state/actions/toggleMultiSelectedKeyAction";
@@ -22,6 +23,7 @@ const Item = ({ children, style }) => {
     const activeConnectedClientSelectedKeys = useSelector((state) => getActiveConnectedClientSelectedKeysSelector(state));
     const setActiveRedisSelectedKey = useCallback(() => dispatch(setActiveRedisSelectedKeyAction(children)), [dispatch, children]);
     const resetActiveRedisSelectedKey = useCallback(() => dispatch(setActiveRedisSelectedKeyAction("")), [dispatch]);
+    const refreshActiveRedisSelectedKey = useCallback(() => dispatch(refreshActiveRedisSelectedKeyAction()), [dispatch]);
     const toggleSelectedKey = useCallback(() => dispatch(toggleSelectedKeyAction(children)), [dispatch, children]);
     const toggleMultiSelectedKey = useCallback(() => dispatch(toggleMultiSelectedKeyAction(children)), [dispatch, children]);
     const deleteRemoteKey = useCallback((key) => dispatch(deleteRemoteKeyAction(key)), [dispatch]);
@@ -40,6 +42,15 @@ const Item = ({ children, style }) => {
                     click: () => deleteRemoteKey(e.target.innerText),
                 },
             ];
+            if (isCurrentKeyActive) {
+                menuItems = [
+                    ...menuItems,
+                    {
+                        label: "Refresh",
+                        click: () => refreshActiveRedisSelectedKey(),
+                    },
+                ];
+            }
             if (activeConnectedClientSelectedKeys.length > 1) {
                 menuItems = [
                     ...menuItems,
@@ -52,7 +63,7 @@ const Item = ({ children, style }) => {
             const menu = createContextMenu(menuItems);
             if (document.hasFocus()) menu.popup();
         },
-        [deleteRemoteKey, deleteRemoteKeys, activeConnectedClientSelectedKeys]
+        [isCurrentKeyActive, deleteRemoteKey, deleteRemoteKeys, activeConnectedClientSelectedKeys, refreshActiveRedisSelectedKey]
     );
 
     const onItemClick = useCallback(
