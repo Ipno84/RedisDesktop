@@ -1,10 +1,10 @@
 {
     "name": "redis-client-manager",
-    "version": "0.0.3",
+    "version": "1.0.0",
     "private": true,
     "homepage": "./",
     "main": "electron/main.js",
-    "productName": "Redis Desktop Manager",
+    "productName": "Redis.Toc",
     "description": "Desktop app for managing Redis clients",
     "author": "Marco Abate <m.abate@logispin.com>",
     "bin": {
@@ -47,7 +47,7 @@
         "eject": "react-scripts eject",
         "electron": "electron .",
         "reb": "node-gyp rebuild --target=7.1.7 --arch=x64 --dist-url=https://electronjs.org/headers",
-        "icon": "electron-icon-maker --input=./public/app-icon/redis-icon.webp --output=./public/app-icon",
+        "icon": "electron-icon-maker --input=./public/app-icon/redis.toc-icon.jpg --output=./public/app-icon",
         "pack": "electron-builder -mwl --x64 --dir",
         "dist": "electron-builder -mwl --x64",
         "dist:all": "cp -r electron/. build/electron && electron-builder build --mac --linux --win --x64 -c.extraMetadata.main=build/electron/main.js --publish never",
@@ -82,8 +82,8 @@
         "webpack-node-externals": "^1.7.2"
     },
     "build": {
-        "appId": "com.logispin.redisdesktopmanager",
-        "productName": "Redis Desktop Manager",
+        "appId": "com.logispin.toc.redis",
+        "productName": "Redis.Toc",
         "copyright": "Copyright © year Logispin Group",
         "extends": null,
         "files": [

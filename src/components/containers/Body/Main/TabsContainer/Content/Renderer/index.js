@@ -6,6 +6,7 @@ import ChunkedTokens from "./ChunkedTokens";
 import EditContainer from "./EditContainer";
 import Prism from "prismjs";
 import Styled from "./styled";
+import TTL from "./TTL";
 import axios from "axios";
 import getActiveConnectedClientKeyValueSelector from "../../../../../../../state/selectors/getActiveConnectedClientKeyValueSelector";
 import getActiveConnectedClientParserSelector from "../../../../../../../state/selectors/getActiveConnectedClientParserSelector";
@@ -122,9 +123,11 @@ const Renderer = () => {
             );
         }
     }, [codeWrapper, intersectionCallback, setObserver]);
+
     return (
         <>
             <Styled id="scroller" ref={codeWrapper} isEditing={isEditing}>
+                <TTL />
                 <Box>
                     {value && (
                         <pre>
